@@ -1,7 +1,15 @@
 
 ### Convention
-#### Commit Message
+#### Branch Strategy
 ```
+main
+├─hotfix
+└─ develop (default)
+    └─ DOMAIN/이슈번호
+```
+
+#### Commit Message
+```javascript
 <type>: <description>
 
 [optional body]
