@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -31,7 +28,7 @@ jobs:
 
       - name: build and push image
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./gildongmu-api/Dockerfile
