@@ -51,7 +51,7 @@ jobs:
 
       - name: whitelist runner ip address
         run: |
-          aws ec2 authorize-security-group-ingress --group-id $HOST_DEVELOP_USERNAME --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-id $HOST_DEVELOP_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: deploy image
         uses: appleboy/ssh-action@master
@@ -60,11 +60,11 @@ jobs:
           username: ${{ secrets.HOST_DEVELOP_USERNAME }}
           key: ${{ secrets.HOST_DEVELOP_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/wanted:latest
-            docker stop webapp && docker rm webapp
-            docker container run -d --name webapp -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/wanted:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+            docker stop api-server && docker rm api-server
+            docker container run -d --name api-server -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
             docker image prune -a -f
 
       - name: revoke runner ip address
         run: |
-          aws ec2 revoke-security-group-ingress --group-id $AWS_INSTANCE_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-id $HOST_DEVELOP_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
