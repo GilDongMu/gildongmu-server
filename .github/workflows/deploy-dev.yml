@@ -16,12 +16,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: build with gradle
         run: |
           chmod +x ./gradlew 
-          ./gradlew gildongmu-api:build -x test
+          ./gradlew gildongmu-api:build
 
       - name: login to docker hub
         uses: docker/login-action@v2
