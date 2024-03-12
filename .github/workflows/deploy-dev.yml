@@ -57,11 +57,12 @@ jobs:
           aws ec2 authorize-security-group-ingress --group-id $HOST_DEVELOP_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: deploy image
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST_DEVELOP }}
           username: ${{ secrets.HOST_DEVELOP_USERNAME }}
           key: ${{ secrets.HOST_DEVELOP_KEY }}
+          port: ${{ secrets.HOST_SSH_PORT }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
 #            docker stop api-server && docker rm api-server
