@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -61,7 +64,7 @@ jobs:
           key: ${{ secrets.HOST_DEVELOP_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
-            docker stop api-server && docker rm api-server
+#            docker stop api-server && docker rm api-server
             docker container run -d --name api-server -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
             docker image prune -a -f
 
