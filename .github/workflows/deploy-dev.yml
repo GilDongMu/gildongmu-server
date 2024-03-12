@@ -65,7 +65,6 @@ jobs:
           port: ${{ secrets.HOST_SSH_PORT }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
-#            docker stop api-server && docker rm api-server
             docker container run -d --name api-server -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
             docker image prune -a -f
 
