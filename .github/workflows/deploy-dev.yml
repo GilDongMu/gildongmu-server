@@ -1,0 +1,70 @@
+name: deployment on develop server
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: build with gradle
+        run: |
+          chmod +x ./gradlew 
+          ./gradlew gildongmu-api:build -x test
+
+      - name: login to docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: build and push image
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./gildongmu-api/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+
+  deploy-image:
+    needs: build-and-push-images
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credential
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+            aws-region: ap-northeast-2
+
+      - name: get runner ip addresses
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: whitelist runner ip address
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id $HOST_DEVELOP_USERNAME --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: deploy image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DEVELOP }}
+          username: ${{ secrets.HOST_DEVELOP_USERNAME }}
+          key: ${{ secrets.HOST_DEVELOP_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/wanted:latest
+            docker stop webapp && docker rm webapp
+            docker container run -d --name webapp -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/wanted:latest
+            docker image prune -a -f
+
+      - name: revoke runner ip address
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id $AWS_INSTANCE_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
