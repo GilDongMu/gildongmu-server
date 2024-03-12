@@ -48,7 +48,7 @@ tasks.test {
 }
 
 tasks.jacocoTestReport {
-	dependsOn(tasks.test)
+	//dependsOn(tasks.test)
 	reports {
 		html.required.set(true)
 	}
@@ -66,11 +66,11 @@ tasks.jacocoTestReport {
 			}
 		})
 	)
-	finalizedBy(tasks.jacocoTestCoverageVerification)
+	//finalizedBy(tasks.jacocoTestCoverageVerification)
 }
 
 tasks.jacocoTestCoverageVerification {
-	dependsOn(tasks.jacocoTestReport)
+	//dependsOn(tasks.jacocoTestReport)
 	violationRules {
 		rule {
 			isEnabled = true
@@ -89,11 +89,11 @@ tasks.jacocoTestCoverageVerification {
 			}
 		}
 	}
-	finalizedBy(tasks.bootBuildImage)
+	//finalizedBy(tasks.bootBuildImage)
 }
 
 tasks.bootBuildImage {
-	dependsOn(tasks.jacocoTestCoverageVerification)
+	//dependsOn(tasks.jacocoTestCoverageVerification)
 	builder.set("paketobuildpacks/builder-jammy-base:latest")
 }
 

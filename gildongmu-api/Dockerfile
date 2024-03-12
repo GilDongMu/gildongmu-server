@@ -1,4 +1,4 @@
 FROM openjdk:17-alpine
-ARG JAR_FILE=/build/libs/api-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=/build/libs/gildongmu-api:0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} /app.jar
 ENTRYPOINT ["java","-Duser.timezone=Asia/Seoul","-jar","/app.jar"]
