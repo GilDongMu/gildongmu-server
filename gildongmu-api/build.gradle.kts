@@ -5,7 +5,7 @@ plugins {
 	jacoco
 }
 
-group = "codeit"
+group = "api"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -57,10 +57,10 @@ tasks.jacocoTestReport {
 			fileTree(it) {
 				setIncludes(
 					listOf(
-						"com/ppp/**/controller/*",
-						"com/ppp/**/service/*",
-						"com/ppp/**/util/*",
-						"com/ppp/**/interceptor/*"
+						"codeit/**/controller/*",
+						"codeit/**/service/*",
+						"codeit/**/util/*",
+						"codeit/**/interceptor/*"
 					)
 				)
 			}
@@ -76,10 +76,10 @@ tasks.jacocoTestCoverageVerification {
 			isEnabled = true
 			element = "CLASS"
 			includes = listOf(
-				"com.ppp.**.controller.*",
-				"com.ppp.**.service.*",
-				"com.ppp.**.util.*",
-				"com.ppp.**.interceptor.*"
+				"codeit.**.controller.*",
+				"codeit.**.service.*",
+				"codeit.**.util.*",
+				"codeit.**.interceptor.*"
 			)
 
 			limit {
