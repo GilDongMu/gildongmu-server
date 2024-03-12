@@ -39,8 +39,8 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
           secrets: |
             DB_URL=${{ secrets.DB_DEVELOP_URL }} 
-            DB_USERNAME=${{ secrets.DB_DEVELOP_USERNAME }} 
-            DB_PASSWORD=${{ secrets.DB_DEVELOP_PASSWORD }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }} 
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 
   deploy-image:
     needs: build-and-push-image
