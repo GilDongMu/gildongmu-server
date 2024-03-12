@@ -55,7 +55,7 @@ jobs:
 
       - name: whitelist runner ip address
         run: |
-          aws ec2 authorize-security-group-ingress --group-id $HOST_DEVELOP_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.HOST_DEVELOP_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       - name: deploy image
         uses: appleboy/ssh-action@v1.0.3
@@ -71,4 +71,4 @@ jobs:
 
       - name: revoke runner ip address
         run: |
-          aws ec2 revoke-security-group-ingress --group-id $HOST_DEVELOP_SG_ID --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.HOST_DEVELOP_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
