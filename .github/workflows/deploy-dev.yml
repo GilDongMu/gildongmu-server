@@ -38,7 +38,7 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
 
   deploy-image:
-    needs: build-and-push-images
+    needs: build-and-push-image
     runs-on: ubuntu-latest
     steps:
       - name: configure aws credential
