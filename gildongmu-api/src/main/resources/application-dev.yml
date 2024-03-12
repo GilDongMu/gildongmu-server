@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:configtree:/run/secrets/
+    import: "optional:configtree:/run/secrets/"
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
