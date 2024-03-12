@@ -36,6 +36,7 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
 	implementation(project(":gildongmu-common"))
 	implementation(project(":gildongmu-domain"))
