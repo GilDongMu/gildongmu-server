@@ -10,7 +10,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: checkout
         uses: actions/setup-java@v3
         with:
@@ -21,7 +21,7 @@ jobs:
       - name: build with gradle
         run: |
           chmod +x ./gradlew 
-          ./gradlew gildongmu-api:build
+          ./gradlew gildongmu-api:bootJar
 
       - name: login to docker hub
         uses: docker/login-action@v2
