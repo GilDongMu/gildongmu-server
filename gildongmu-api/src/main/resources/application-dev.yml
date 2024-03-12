@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:configtree:/run/secrets/
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -9,3 +11,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+
+docker-secret:
+  bind-path: /run/secrets
