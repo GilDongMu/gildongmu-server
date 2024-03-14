@@ -17,4 +17,4 @@ spring:
         show_sql: true
 
 jwt:
-  secret: C775C5275FABA
+  secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==

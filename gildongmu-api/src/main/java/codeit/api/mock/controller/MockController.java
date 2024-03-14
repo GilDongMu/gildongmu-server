@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MockController {
+
     @GetMapping("/mock")
     public ResponseEntity<Void> test() {
-        throw new MockException(ErrorCode.DOMAIN_NOT_FOUND);
+        throw new MockException(ErrorCode.REQUEST_ARGUMENT_NOT_VALID);
     }
 }

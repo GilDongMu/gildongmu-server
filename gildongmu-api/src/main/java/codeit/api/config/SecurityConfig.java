@@ -21,18 +21,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final UserDetailsServiceImpl userDetailsService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(
-                        authorize -> authorize
-                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                .anyRequest().hasRole("USER"))
-                .build();
+            .csrf(AbstractHttpConfigurer::disable)
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .authorizeHttpRequests(
+                authorize -> authorize
+                    .requestMatchers(PathRequest.toH2Console()).permitAll()
+                    .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .anyRequest().hasRole("USER"))
+            .build();
     }
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
