@@ -1,6 +1,6 @@
 package codeit.api.auth.dto.response;
 
-import codeit.common.security.dto.TokenDto;
+import codeit.common.security.dto.transfer.TokenDto;
 import lombok.Builder;
 
 

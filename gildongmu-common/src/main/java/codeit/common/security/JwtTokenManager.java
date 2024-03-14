@@ -1,6 +1,6 @@
 package codeit.common.security;
 
-import codeit.common.security.dto.TokenDto;
+import codeit.common.security.dto.transfer.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

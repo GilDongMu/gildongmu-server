@@ -16,7 +16,7 @@ import codeit.api.auth.dto.response.TokenResponse;
 import codeit.api.auth.exception.AuthException;
 import codeit.api.exception.ErrorCode;
 import codeit.common.security.JwtTokenManager;
-import codeit.common.security.dto.TokenDto;
+import codeit.common.security.dto.transfer.TokenDto;
 import codeit.domain.user.constant.Gender;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;

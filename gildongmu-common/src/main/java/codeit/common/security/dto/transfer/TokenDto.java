@@ -1,4 +1,4 @@
-package codeit.common.security.dto;
+package codeit.common.security.dto.transfer;
 
 import lombok.Builder;
 
