@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Service
 public class JwtTokenManager {
-    private static SecretKey encryptKey = null;
+    private static SecretKey encryptKey;
     private static final long ACCESS_ALLOWANCE_TIME = 1000 * 60 * 60 * 24;
     private static final long REFRESH_ALLOWANCE_TIME = 1000 * 60 * 60 * 24 * 14;
 

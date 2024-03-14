@@ -11,4 +11,4 @@ spring:
       ddl-auto: update
 
 jwt:
-  secret-key: ${JWT_SECRET}
+  secret: ${JWT_SECRET}
