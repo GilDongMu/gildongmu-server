@@ -57,6 +57,6 @@ public class AuthService {
     }
 
     public EmailCheckResponse checkEmail(String email) {
-        return EmailCheckResponse.of(userRepository.existsByEmail(email));
+        return EmailCheckResponse.of(!userRepository.existsByEmail(email));
     }
 }
