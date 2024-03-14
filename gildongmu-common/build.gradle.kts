@@ -32,6 +32,10 @@ dependencies {
 	runtimeOnly ("io.jsonwebtoken:jjwt-impl:0.12.5")
 	runtimeOnly ("io.jsonwebtoken:jjwt-jackson:0.12.5")
 	implementation("org.hibernate:hibernate-validator:8.0.1.Final")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+	implementation(project(":gildongmu-domain"))
 }
 
 

@@ -1,6 +1,7 @@
-package codeit.api.security;
+package codeit.common.security;
 
 import codeit.domain.user.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +10,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserDetailsImpl implements UserDetails {
+public class UserPrincipal implements UserDetails {
+    @Getter
     private final User user;
     private final List<GrantedAuthority> authorities = new ArrayList<>();
 
-    public UserDetailsImpl(User user) {
+    public UserPrincipal(User user) {
         this.user = user;
         authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
     }
@@ -21,10 +23,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     @Override

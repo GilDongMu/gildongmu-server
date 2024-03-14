@@ -1,7 +1,7 @@
 package codeit.api.config;
 
-import codeit.api.security.JwtAuthenticationFilter;
-import codeit.api.security.UserDetailsServiceImpl;
+import codeit.common.security.JwtAuthenticationFilter;
+import codeit.common.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
