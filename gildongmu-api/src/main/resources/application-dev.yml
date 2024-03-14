@@ -9,3 +9,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
+
+jwt:
+  secret-key: ${JWT_SECRET}
