@@ -1,6 +1,6 @@
 package codeit.api.mock.dto.response;
 
-import codeit.domain.user.User;
+import codeit.domain.user.entity.User;
 import lombok.Builder;
 
 @Builder
