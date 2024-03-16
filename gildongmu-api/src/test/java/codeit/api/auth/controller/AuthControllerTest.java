@@ -55,7 +55,7 @@ class AuthControllerTest {
                     MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes()))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
             ).andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
         //then
     }
 
