@@ -37,6 +37,10 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation ("org.springframework.security:spring-security-test")
 
 	implementation(project(":gildongmu-common"))
 	implementation(project(":gildongmu-domain"))
