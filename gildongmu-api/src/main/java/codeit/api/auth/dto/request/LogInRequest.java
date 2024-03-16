@@ -17,7 +17,7 @@ public class LogInRequest {
     @Email(message = "invalid email")
     private String email;
 
-    @NotBlank(message = "invalid password")
-    @Size(min = 8, message = "invalid password")
+    @NotBlank(message = "invalid blank password")
+    @Size(min = 8, message = "invalid size password")
     private String password;
 }

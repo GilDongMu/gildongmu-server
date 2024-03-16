@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,9 +34,9 @@ public class AuthController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(encoding = @Encoding(name = "request", contentType = "application/json")))
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Void> register(@Valid @RequestPart SignUpRequest request,
-        @Valid @RequestPart(required = false) MultipartFile profile) {
+                                          @Valid @RequestPart(required = false) MultipartFile profile) {
         authService.register(request, profile);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "로그인")
@@ -49,7 +50,7 @@ public class AuthController {
     @ApiResponse
     @PostMapping("/check-email")
     private ResponseEntity<EmailCheckResponse> checkEmail(
-        @Valid @RequestBody EmailCheckRequest request) {
+            @Valid @RequestBody EmailCheckRequest request) {
         return ResponseEntity.ok(authService.checkEmail(request.getEmail()));
     }
 

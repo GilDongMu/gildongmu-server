@@ -24,12 +24,12 @@ public class SignUpRequest {
     @Email(message = "invalid email")
     private String email;
 
-    @NotBlank(message = "invalid nickname")
-    @Size(min = 1, max = 8, message = "invalid nickname")
+    @NotBlank(message = "invalid blank nickname")
+    @Size(min = 1, max = 8, message = "invalid size nickname")
     private String nickname;
 
-    @NotBlank(message = "invalid password")
-    @Size(min = 8, message = "invalid password")
+    @NotBlank(message = "invalid blank password")
+    @Size(min = 8, message = "invalid size password")
     private String password;
 
     @Getter(AccessLevel.NONE)
