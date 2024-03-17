@@ -40,6 +40,8 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             JWT_SECRET=${{ secrets.HOST_DEVELOP_JWT_SECRET }}
             PROFILE=dev
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
 
   deploy-image:
     needs: build-and-push-image
