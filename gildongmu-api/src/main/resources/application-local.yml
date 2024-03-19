@@ -15,6 +15,16 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: google-client-id
+            client-secret: google-client-secret
+            scope:
+              - email
 
 jwt:
   secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==
+

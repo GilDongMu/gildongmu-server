@@ -41,7 +41,7 @@ public class AuthService {
                 .dateOfBirth(request.getDayOfBirth())
                 .nickname(request.getNickname())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .favoriteSpots(new ArrayList<>(request.getFavoriteSpots()))
+                .favoriteSpots(request.getFavoriteSpots())
                 .build()
         );
     }

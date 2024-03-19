@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.hibernate:hibernate-validator:8.0.1.Final")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
 	implementation(project(":gildongmu-domain"))
 }

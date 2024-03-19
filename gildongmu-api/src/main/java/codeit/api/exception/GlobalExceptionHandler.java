@@ -2,6 +2,7 @@ package codeit.api.exception;
 
 import codeit.api.auth.exception.AuthException;
 import codeit.api.mock.exception.MockException;
+import codeit.api.oauth2.exception.OAuth2Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,18 @@ import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 public class GlobalExceptionHandler {
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
 
+    @ExceptionHandler(OAuth2Exception.class)
+    public ResponseEntity<ExceptionResponse<String>> handleOAuth2Exception(OAuth2Exception e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ExceptionResponse<String>> handleAuthException(AuthException e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

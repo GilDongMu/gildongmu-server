@@ -1,6 +1,6 @@
 package codeit.common.security;
 
-import codeit.common.security.dto.response.AuthenticationExceptionResponse;
+import codeit.common.security.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class AuthenticationFailureEntryPoint implements AuthenticationEntryPoint
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(
-            new AuthenticationExceptionResponse(HttpStatus.UNAUTHORIZED.name(),
+            new ExceptionResponse<>(HttpStatus.UNAUTHORIZED.name(),
                 authException.getMessage())));
     }
 }
