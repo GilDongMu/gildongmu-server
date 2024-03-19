@@ -26,26 +26,26 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(10)")
+    @Column(nullable = false, length = 10)
     private Role role;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(columnDefinition = "varchar(8)")
+    @Column(length = 8)
     private String nickname;
 
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(6)")
+    @Column(length = 6)
     private Gender gender;
 
     private LocalDate dateOfBirth;
 
     private String profilePath;
 
-    @Column(columnDefinition = "varchar(200)")
+    @Column(length = 200)
     private String bio;
 
     @Column(name = "favorite_spots", columnDefinition = "json")
