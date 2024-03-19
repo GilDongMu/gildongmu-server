@@ -79,7 +79,7 @@ class OAuth2LoginControllerTest {
     void issueToken_success() throws Exception {
         //given
         //when
-        mockMvc.perform(get("/oauth2/token")
+        mockMvc.perform(get("/oauth2/login")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

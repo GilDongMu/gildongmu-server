@@ -53,7 +53,7 @@ public class OAuth2LoginController {
 
     @Operation(summary = "OAuth2 로그인 유저 토큰 발급")
     @ApiResponse
-    @GetMapping("/token")
+    @GetMapping("/login")
     private ResponseEntity<TokenResponse> issueToken(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser) {
         return ResponseEntity.ok(oAuth2LoginService.issueToken(oAuth2LoginUser));
     }
