@@ -1,7 +1,6 @@
 package codeit.common.security;
 
 import codeit.domain.user.constant.Role;
-import codeit.domain.user.entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,12 +20,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         OAuth2LoginUser oAuth2LoginUser = (OAuth2LoginUser) authentication.getPrincipal();
-        User loginUser = oAuth2LoginUser.getUser();
 
-        if (Role.ROLE_GUEST.equals(loginUser.getRole())) {
+        if (oAuth2LoginUser.hasAuthority(Role.ROLE_GUEST)) {
             response.sendRedirect("/oauth2/signup");
-        } else if (Role.ROLE_USER.equals(loginUser.getRole())) {
-            response.sendRedirect("/oauth2/token");
+        } else if (oAuth2LoginUser.hasAuthority(Role.ROLE_GUEST)) {
+            response.sendRedirect("/oauth2/login");
         }
 
     }
