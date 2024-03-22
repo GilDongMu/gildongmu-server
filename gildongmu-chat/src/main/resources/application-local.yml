@@ -2,6 +2,25 @@ server:
   port: 8081
 
 spring:
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: H2
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
   data:
     mongodb:
-      uri: mongodb://admin:password@localhost:27017/gildongmu
+      uri: mongodb://admin:password@localhost:27017/gildongmu?authSource=admin
+
+jwt:
+  secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==
