@@ -1,6 +1,6 @@
 package codeit.api.config;
 
-import codeit.common.security.UserPrincipal;
+import codeit.api.security.UserPrincipal;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

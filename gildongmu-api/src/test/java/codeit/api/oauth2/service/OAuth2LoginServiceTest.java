@@ -5,7 +5,7 @@ import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.common.security.JwtTokenManager;
-import codeit.common.security.OAuth2LoginUser;
+import codeit.api.security.OAuth2LoginUser;
 import codeit.common.security.dto.transfer.TokenDto;
 import codeit.domain.user.constant.Gender;
 import codeit.domain.user.constant.Role;

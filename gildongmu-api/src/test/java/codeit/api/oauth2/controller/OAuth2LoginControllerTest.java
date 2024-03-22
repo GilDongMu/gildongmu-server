@@ -3,6 +3,7 @@ package codeit.api.oauth2.controller;
 import codeit.api.config.WithMockOAuthLoginUser;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.service.OAuth2LoginService;
+import codeit.api.security.*;
 import codeit.domain.user.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +36,18 @@ class OAuth2LoginControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OAuth2LoginService oAuth2LoginService;
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
+    @MockBean
+    private OAuth2UserServiceImpl oAuth2UserService;
+    @MockBean
+    private AuthenticationDeniedHandler authenticationDeniedHandler;
+    @MockBean
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    @MockBean
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    @MockBean
+    private ClientRegistrationRepository clientRegistrationRepository;
 
 
     @Test
@@ -53,7 +68,7 @@ class OAuth2LoginControllerTest {
                                 MediaType.APPLICATION_JSON_VALUE,
                                 objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8)))
                         .file(new MockMultipartFile("images", "image.jpg",
-                                MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes()))
+                                MediaType.IMAGE_JPEG_VALUE, "abcde" .getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                 ).andDo(print())
                 .andExpect(status().isOk());

@@ -1,8 +1,5 @@
-package codeit.api.config;
+package codeit.api.security;
 
-import codeit.common.security.AuthenticationDeniedHandler;
-import codeit.common.security.JwtAuthenticationFilter;
-import codeit.common.security.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,17 +19,27 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final UserDetailsService userDetailsService;
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AuthenticationDeniedHandler authenticationDeniedHandler;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedHeaders("*")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("*");
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -4,7 +4,7 @@ import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.OAuth2UserInfoResponse;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.service.OAuth2LoginService;
-import codeit.common.security.OAuth2LoginUser;
+import codeit.api.security.OAuth2LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Controller
 @Slf4j
