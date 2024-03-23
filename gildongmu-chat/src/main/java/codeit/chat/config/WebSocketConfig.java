@@ -30,7 +30,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setErrorHandler(stompSubProtocolErrorHandler);
         registry.addEndpoint("/group-chat")
                 .setAllowedOriginPatterns("*")
-                .setAllowedOrigins("https://apic.app")
                 .setHandshakeHandler(defaultHandshakeHandler);
         registry.addEndpoint("/group-chat")
                 .setAllowedOriginPatterns("*")
