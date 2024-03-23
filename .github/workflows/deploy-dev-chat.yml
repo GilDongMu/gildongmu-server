@@ -1,6 +1,6 @@
 name: deployment chat on develop server
 on:
-  pull_request:
+  push:
     branches:
       - develop
 jobs:
@@ -71,6 +71,7 @@ jobs:
           port: ${{ secrets.HOST_SSH_PORT }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/chat:latest
+            docker stop chat-server && docker rm chat-server
             docker container run -d --name chat-server -p 8081:8081 ${{ secrets.DOCKER_HUB_USERNAME }}/chat:latest
             docker image prune -a -f
 
