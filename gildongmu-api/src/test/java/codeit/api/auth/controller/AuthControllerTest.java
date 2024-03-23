@@ -4,7 +4,11 @@ import codeit.api.auth.dto.request.EmailCheckRequest;
 import codeit.api.auth.dto.request.LogInRequest;
 import codeit.api.auth.dto.request.SignUpRequest;
 import codeit.api.auth.service.AuthService;
-import codeit.api.security.*;
+import codeit.api.security.AuthenticationDeniedHandler;
+import codeit.api.security.OAuth2LoginSuccessHandler;
+import codeit.api.security.OAuth2UserServiceImpl;
+import codeit.api.security.UserDetailsServiceImpl;
+import codeit.domain.chat.repository.ChatMongoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AuthController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class AuthControllerTest {
 
     @Autowired
@@ -49,6 +52,8 @@ class AuthControllerTest {
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     @MockBean
     private ClientRegistrationRepository clientRegistrationRepository;
+    @MockBean
+    private ChatMongoRepository chatMongoRepository;
 
 
     @Test
@@ -70,7 +75,7 @@ class AuthControllerTest {
                                 MediaType.APPLICATION_JSON_VALUE,
                                 objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8)))
                         .file(new MockMultipartFile("images", "image.jpg",
-                                MediaType.IMAGE_JPEG_VALUE, "abcde" .getBytes()))
+                                MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                 ).andDo(print())
                 .andExpect(status().isCreated());

@@ -3,7 +3,11 @@ package codeit.api.oauth2.controller;
 import codeit.api.config.WithMockOAuthLoginUser;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.service.OAuth2LoginService;
-import codeit.api.security.*;
+import codeit.api.security.AuthenticationDeniedHandler;
+import codeit.api.security.OAuth2LoginSuccessHandler;
+import codeit.api.security.OAuth2UserServiceImpl;
+import codeit.api.security.UserDetailsServiceImpl;
+import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +52,8 @@ class OAuth2LoginControllerTest {
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     @MockBean
     private ClientRegistrationRepository clientRegistrationRepository;
+    @MockBean
+    private ChatMongoRepository chatMongoRepository;
 
 
     @Test
@@ -68,7 +74,7 @@ class OAuth2LoginControllerTest {
                                 MediaType.APPLICATION_JSON_VALUE,
                                 objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8)))
                         .file(new MockMultipartFile("images", "image.jpg",
-                                MediaType.IMAGE_JPEG_VALUE, "abcde" .getBytes()))
+                                MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                 ).andDo(print())
                 .andExpect(status().isOk());
