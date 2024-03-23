@@ -9,17 +9,17 @@ import java.io.Serializable;
 
 @Getter
 @Builder
-public class ChatMessageResponse implements Serializable {
+public class ChatResponse implements Serializable {
     private String id;
     private ChatUserResponse sender;
     private String content;
     private ChatType type;
 
-    public static ChatMessageResponse from(Chat chat) {
-        return ChatMessageResponse.builder()
+    public static ChatResponse from(Chat chat) {
+        return ChatResponse.builder()
                 .id(chat.getId())
                 .content(chat.getContent())
-                .type(ChatType.MESSAGE)
+                .type(chat.getType())
                 .sender(ChatUserResponse.from(chat.getSender()))
                 .build();
     }

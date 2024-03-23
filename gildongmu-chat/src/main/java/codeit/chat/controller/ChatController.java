@@ -2,7 +2,7 @@ package codeit.chat.controller;
 
 import codeit.chat.controller.dto.request.ChatImageRequest;
 import codeit.chat.controller.dto.request.ChatMessageRequest;
-import codeit.chat.controller.dto.response.ChatMessageResponse;
+import codeit.chat.controller.dto.response.ChatResponse;
 import codeit.chat.security.UserPrincipal;
 import codeit.chat.service.ChatService;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ public class ChatController {
 
     @MessageMapping("/rooms/{roomId}/message")
     @SendTo("/rooms/{roomId}")
-    public ChatMessageResponse message(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest message, UserPrincipal principal) {
+    public ChatResponse message(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest message, UserPrincipal principal) {
         return chatService.message(roomId, message, principal.getUser());
     }
 
