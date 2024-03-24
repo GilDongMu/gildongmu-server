@@ -21,6 +21,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:password@localhost:27017/gildongmu?authSource=admin
+    redis:
+      password: ${REDIS_PASSWORD}
+      timeout: 600ms
 
 jwt:
   secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==

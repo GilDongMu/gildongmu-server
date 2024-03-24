@@ -40,6 +40,7 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             JWT_SECRET=${{ secrets.HOST_DEVELOP_JWT_SECRET }}
             MONGO_URI=${{ secrets.MONGO_DEVELOP_URL }}
+            REDIS_PASSWORD=${{ secrets.REDIS_DEVELOP_PASSWORD }}
             PROFILE=dev
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}

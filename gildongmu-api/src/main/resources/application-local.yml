@@ -18,6 +18,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:password@localhost:27017/gildongmu?authSource=admin
+    redis:
+      password: PASSWORD
+      timeout: 600ms
   security:
     oauth2:
       client:

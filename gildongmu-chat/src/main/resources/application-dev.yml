@@ -15,6 +15,9 @@ spring:
   data:
     mongodb:
       uri: ${MONGO_URI}
+    redis:
+      password: ${REDIS_PASSWORD}
+      timeout: 600ms
 
 jwt:
   secret: ${JWT_SECRET}
