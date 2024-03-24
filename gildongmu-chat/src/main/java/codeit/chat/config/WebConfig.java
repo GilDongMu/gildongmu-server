@@ -1,4 +1,4 @@
-package codeit.api.config;
+package codeit.chat.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedHeaders("*")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("*");
+                .allowedOriginPatterns("*")
+                .allowedMethods("*")
+                .allowCredentials(false);
     }
 }

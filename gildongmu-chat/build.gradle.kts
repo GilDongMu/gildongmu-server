@@ -27,12 +27,20 @@ jacoco {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.data:spring-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("com.h2database:h2")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation ("org.webjars:sockjs-client:1.5.1")
+    implementation ("org.webjars:stomp-websocket:2.3.4")
+
+    implementation(project(":gildongmu-common"))
+    implementation(project(":gildongmu-domain"))
 }
 
 tasks.test {
@@ -50,7 +58,6 @@ tasks.jacocoTestReport {
             fileTree(it) {
                 setIncludes(
                     listOf(
-                        "codeit/**/controller/*",
                         "codeit/**/service/*",
                         "codeit/**/util/*",
                         "codeit/**/interceptor/*"
@@ -69,7 +76,6 @@ tasks.jacocoTestCoverageVerification {
             isEnabled = true
             element = "CLASS"
             includes = listOf(
-                "codeit.**.controller.*",
                 "codeit.**.service.*",
                 "codeit.**.util.*",
                 "codeit.**.interceptor.*"

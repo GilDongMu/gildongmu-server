@@ -1,5 +1,6 @@
-package codeit.common.security;
+package codeit.api.security;
 
+import codeit.common.security.JwtTokenManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

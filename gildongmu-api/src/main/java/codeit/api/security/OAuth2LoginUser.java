@@ -1,4 +1,4 @@
-package codeit.common.security;
+package codeit.api.security;
 
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;

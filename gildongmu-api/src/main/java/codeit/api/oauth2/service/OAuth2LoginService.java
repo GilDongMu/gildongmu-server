@@ -5,7 +5,7 @@ import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.common.security.JwtTokenManager;
-import codeit.common.security.OAuth2LoginUser;
+import codeit.api.security.OAuth2LoginUser;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

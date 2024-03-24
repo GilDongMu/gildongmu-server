@@ -3,6 +3,11 @@ package codeit.api.oauth2.controller;
 import codeit.api.config.WithMockOAuthLoginUser;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.service.OAuth2LoginService;
+import codeit.api.security.AuthenticationDeniedHandler;
+import codeit.api.security.OAuth2LoginSuccessHandler;
+import codeit.api.security.OAuth2UserServiceImpl;
+import codeit.api.security.UserDetailsServiceImpl;
+import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +18,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +40,20 @@ class OAuth2LoginControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OAuth2LoginService oAuth2LoginService;
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
+    @MockBean
+    private OAuth2UserServiceImpl oAuth2UserService;
+    @MockBean
+    private AuthenticationDeniedHandler authenticationDeniedHandler;
+    @MockBean
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    @MockBean
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    @MockBean
+    private ClientRegistrationRepository clientRegistrationRepository;
+    @MockBean
+    private ChatMongoRepository chatMongoRepository;
 
 
     @Test

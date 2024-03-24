@@ -9,6 +9,9 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
   security:
     oauth2:
       client:

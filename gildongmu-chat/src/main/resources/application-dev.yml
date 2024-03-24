@@ -2,6 +2,19 @@ server:
   port: 8081
 
 spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
   data:
     mongodb:
       uri: ${MONGO_URI}
+
+jwt:
+  secret: ${JWT_SECRET}

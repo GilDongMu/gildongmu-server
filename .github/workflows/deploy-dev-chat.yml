@@ -1,4 +1,4 @@
-name: deployment on develop server
+name: deployment chat on develop server
 on:
   push:
     branches:
@@ -18,7 +18,7 @@ jobs:
       - name: build with gradle
         run: |
           chmod +x ./gradlew 
-          ./gradlew gildongmu-api:build
+          ./gradlew gildongmu-chat:build
 
       - name: login to docker hub
         uses: docker/login-action@v2
@@ -31,17 +31,17 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./gildongmu-api/Dockerfile
+          file: ./gildongmu-chat/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/chat:latest
           build-args: |
             DB_URL=${{ secrets.DB_DEVELOP_URL }}
             DB_USERNAME=${{ secrets.DB_USERNAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             JWT_SECRET=${{ secrets.HOST_DEVELOP_JWT_SECRET }}
+            MONGO_URI=${{ secrets.MONGO_DEVELOP_URL }}
             PROFILE=dev
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            
 
   deploy-image:
     needs: build-and-push-image
@@ -70,9 +70,9 @@ jobs:
           key: ${{ secrets.HOST_DEVELOP_KEY }}
           port: ${{ secrets.HOST_SSH_PORT }}
           script: |
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
-            docker stop api-server && docker rm api-server
-            docker container run -d --name api-server -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/api:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/chat:latest
+            docker stop chat-server && docker rm chat-server
+            docker container run -d --name chat-server -p 8081:8081 ${{ secrets.DOCKER_HUB_USERNAME }}/chat:latest
             docker image prune -a -f
 
       - name: revoke runner ip address

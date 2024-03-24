@@ -1,4 +1,4 @@
-package codeit.common.security;
+package codeit.api.security;
 
 import codeit.common.security.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
