@@ -1,5 +1,6 @@
 package codeit.api.post.service;
 
+import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.dto.TripDate;
 import codeit.api.post.dto.request.ImageCreateRequest;
 import codeit.api.post.dto.request.PostCreateRequest;
@@ -11,6 +12,7 @@ import codeit.api.post.exception.PostException;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.TagMap.Entity.TagMap;
+import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -49,6 +51,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final TagService tagService;
+    private final ParticipantService participantService;
 
     public PostListResponse findPosts(String postFilter, Pageable pageable) {
         Specification<Post> specification = getFilter(postFilter);
@@ -185,6 +188,7 @@ public class PostService {
 
         postRepository.save(post);
         tagService.saveTag(post, postRequest.tag());
+        participantService.saveLeader(post, user);
     }
 
     public PostResponse updatePost(Long postId, PostUpdateRequest postUpdateRequest) {
