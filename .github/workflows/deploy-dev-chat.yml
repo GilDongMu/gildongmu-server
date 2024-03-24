@@ -41,6 +41,7 @@ jobs:
             JWT_SECRET=${{ secrets.HOST_DEVELOP_JWT_SECRET }}
             MONGO_URI=${{ secrets.MONGO_DEVELOP_URL }}
             REDIS_PASSWORD=${{ secrets.REDIS_DEVELOP_PASSWORD }}
+            REDIS_HOST=${{ secrets.REDIS_DEVELOP_HOST }}
             PROFILE=dev
             
 
