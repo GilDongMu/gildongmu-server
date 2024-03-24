@@ -1,4 +1,4 @@
-package codeit.api.participant;
+package codeit.api.participant.exception;
 
 import codeit.api.exception.ErrorCode;
 import lombok.AllArgsConstructor;
