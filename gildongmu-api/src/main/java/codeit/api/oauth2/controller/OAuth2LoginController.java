@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,9 @@ public class OAuth2LoginController {
     @ApiResponse
     @GetMapping("/login")
     private ResponseEntity<TokenResponse> issueToken(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser) {
-        return ResponseEntity.ok(oAuth2LoginService.issueToken(oAuth2LoginUser));
+        TokenResponse response = oAuth2LoginService.issueToken(oAuth2LoginUser);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, response.generateCookie())
+                .body(response);
     }
 }

@@ -2,11 +2,13 @@ package codeit.api.oauth2.controller;
 
 import codeit.api.config.WithMockOAuthLoginUser;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
+import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.service.OAuth2LoginService;
 import codeit.api.security.AuthenticationDeniedHandler;
 import codeit.api.security.OAuth2LoginSuccessHandler;
 import codeit.api.security.OAuth2UserServiceImpl;
 import codeit.api.security.UserDetailsServiceImpl;
+import codeit.common.security.JwtTokenManager;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,6 +58,8 @@ class OAuth2LoginControllerTest {
     private ClientRegistrationRepository clientRegistrationRepository;
     @MockBean
     private ChatMongoRepository chatMongoRepository;
+    @MockBean
+    private JwtTokenManager jwtTokenManager;
 
 
     @Test
@@ -99,6 +105,8 @@ class OAuth2LoginControllerTest {
     @DisplayName("OAuth2 로그인 유저 토큰 발급")
     void issueToken_success() throws Exception {
         //given
+        given(oAuth2LoginService.issueToken(any()))
+                .willReturn(TokenResponse.of("any", "any"));
         //when
         mockMvc.perform(get("/oauth2/login")
                         .contentType(MediaType.APPLICATION_JSON))

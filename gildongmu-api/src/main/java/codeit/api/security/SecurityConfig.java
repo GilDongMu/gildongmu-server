@@ -1,5 +1,6 @@
 package codeit.api.security;
 
+import codeit.common.security.JwtTokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final UserDetailsService userDetailsService;
+    private final JwtTokenManager jwtTokenManager;
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AuthenticationDeniedHandler authenticationDeniedHandler;
@@ -68,7 +70,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(userDetailsService);
+        return new JwtAuthenticationFilter(userDetailsService, jwtTokenManager);
     }
 
     @Bean

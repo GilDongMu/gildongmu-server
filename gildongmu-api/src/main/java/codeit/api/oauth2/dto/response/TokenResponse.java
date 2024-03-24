@@ -1,19 +1,24 @@
 package codeit.api.oauth2.dto.response;
 
-import codeit.common.security.dto.transfer.TokenDto;
+import codeit.common.security.CookieUtil;
 import lombok.Builder;
+import net.minidev.json.annotate.JsonIgnore;
 
 
 @Builder
 public record TokenResponse(
-    String accessToken,
-    String refreshToken
+        String accessToken,
+        @JsonIgnore String refreshToken
 ) {
 
-    public static TokenResponse from(TokenDto dto) {
+    public static TokenResponse of(String accessToken, String refreshToken) {
         return TokenResponse.builder()
-            .accessToken(dto.accessToken())
-            .refreshToken(dto.refreshToken())
-            .build();
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public String generateCookie() {
+        return CookieUtil.generateCookie("refreshToken", refreshToken);
     }
 }

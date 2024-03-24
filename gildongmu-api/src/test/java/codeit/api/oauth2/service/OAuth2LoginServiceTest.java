@@ -4,9 +4,8 @@ import codeit.api.exception.ErrorCode;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.exception.OAuth2Exception;
-import codeit.common.security.JwtTokenManager;
 import codeit.api.security.OAuth2LoginUser;
-import codeit.common.security.dto.transfer.TokenDto;
+import codeit.common.security.JwtTokenManager;
 import codeit.domain.user.constant.Gender;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
@@ -23,7 +22,10 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,11 +103,10 @@ class OAuth2LoginServiceTest {
     @DisplayName("토큰 발급 성공")
     void issueTokenTest_success() {
         //given
-        given(jwtTokenManager.generate(anyString()))
-                .willReturn(TokenDto.builder()
-                        .accessToken("accessTokenValue")
-                        .refreshToken("refreshTokenValue")
-                        .build());
+        given(jwtTokenManager.generateAccessToken(anyString()))
+                .willReturn("accessTokenValue");
+        given(jwtTokenManager.generateRefreshToken(anyString()))
+                .willReturn("refreshTokenValue");
 
         OAuth2LoginUser oAuth2LoginUser = new OAuth2LoginUser(new DefaultOAuth2User(new ArrayList<>(), Map.of("any", "any"), "any"), "any", User.builder()
                 .role(Role.ROLE_USER)

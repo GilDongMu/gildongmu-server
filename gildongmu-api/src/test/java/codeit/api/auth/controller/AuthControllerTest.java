@@ -3,11 +3,13 @@ package codeit.api.auth.controller;
 import codeit.api.auth.dto.request.EmailCheckRequest;
 import codeit.api.auth.dto.request.LogInRequest;
 import codeit.api.auth.dto.request.SignUpRequest;
+import codeit.api.auth.dto.response.TokenResponse;
 import codeit.api.auth.service.AuthService;
 import codeit.api.security.AuthenticationDeniedHandler;
 import codeit.api.security.OAuth2LoginSuccessHandler;
 import codeit.api.security.OAuth2UserServiceImpl;
 import codeit.api.security.UserDetailsServiceImpl;
+import codeit.common.security.JwtTokenManager;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,6 +58,8 @@ class AuthControllerTest {
     private ClientRegistrationRepository clientRegistrationRepository;
     @MockBean
     private ChatMongoRepository chatMongoRepository;
+    @MockBean
+    private JwtTokenManager jwtTokenManager;
 
 
     @Test
@@ -90,6 +96,8 @@ class AuthControllerTest {
                 .email("abcde@naver.com")
                 .password("123456789")
                 .build();
+        given(authService.login(any()))
+                .willReturn(TokenResponse.of("any", "any"));
         //when
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

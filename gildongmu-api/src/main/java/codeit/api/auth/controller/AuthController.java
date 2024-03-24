@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
@@ -39,7 +42,10 @@ public class AuthController {
     @ApiResponse
     @PostMapping("/login")
     private ResponseEntity<TokenResponse> login(@Valid @RequestBody LogInRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        TokenResponse response = authService.login(request);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, response.generateCookie())
+                .body(response);
     }
 
     @Operation(summary = "이메일 중복 검사")

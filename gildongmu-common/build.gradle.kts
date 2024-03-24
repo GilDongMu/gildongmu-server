@@ -33,6 +33,7 @@ dependencies {
 	runtimeOnly ("io.jsonwebtoken:jjwt-jackson:0.12.5")
 	implementation("org.hibernate:hibernate-validator:8.0.1.Final")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
 	implementation(project(":gildongmu-domain"))
 }
