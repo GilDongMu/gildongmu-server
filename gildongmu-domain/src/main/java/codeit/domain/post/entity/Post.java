@@ -111,7 +111,7 @@ public class Post extends BaseTimeEntity {
     }
 
     public void updateDestination(String destination) {
-        this.destination =destination;
+        this.destination = destination;
     }
 
     public void updateTitle(String title) {
