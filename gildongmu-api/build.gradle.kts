@@ -44,6 +44,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("org.springframework.data:spring-data-mongodb")
 	implementation ("io.jsonwebtoken:jjwt-api:0.12.5")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
 	implementation(project(":gildongmu-common"))
 	implementation(project(":gildongmu-domain"))

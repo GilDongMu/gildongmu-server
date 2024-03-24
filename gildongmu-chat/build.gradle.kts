@@ -38,6 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation ("org.webjars:sockjs-client:1.5.1")
     implementation ("org.webjars:stomp-websocket:2.3.4")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation(project(":gildongmu-common"))
     implementation(project(":gildongmu-domain"))
