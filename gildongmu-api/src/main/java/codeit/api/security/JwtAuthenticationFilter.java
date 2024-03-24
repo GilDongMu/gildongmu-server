@@ -1,6 +1,8 @@
 package codeit.api.security;
 
+import codeit.common.security.CookieUtil;
 import codeit.common.security.JwtTokenManager;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,18 +21,38 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
+import static codeit.common.exception.ErrorCode.AUTHENTICATION_FAILED;
+
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_PREFIX = "Bearer ";
     private final UserDetailsService userDetailsService;
+    private final JwtTokenManager jwtTokenManager;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        getToken(request).ifPresent(token -> {
-            if (StringUtils.hasText(token) && JwtTokenManager.validate(token))
-                authorize(token);
-        });
+        getToken(request).ifPresent(
+                accessToken -> {
+                    try {
+                        if (StringUtils.hasText(accessToken) && JwtTokenManager.validate(accessToken))
+                            authorize(accessToken);
+                    } catch (ExpiredJwtException e) {
+                        authorizeIfValidRefreshToken(request, response);
+                    }
+                }
+        );
         filterChain.doFilter(request, response);
+    }
+
+    private void authorizeIfValidRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String email = CookieUtil.getCookieValue(request.getCookies(), "refreshToken")
+                .map(jwtTokenManager::findEmailByRefreshToken)
+                .orElseThrow(() -> new SecurityException(AUTHENTICATION_FAILED.getMessage()));
+        String newAccessToken = jwtTokenManager.generateAccessToken(email);
+        String newRefreshToken = jwtTokenManager.generateRefreshToken(email);
+        response.setHeader(HttpHeaders.AUTHORIZATION, TOKEN_PREFIX + newAccessToken);
+        response.setHeader(HttpHeaders.SET_COOKIE, CookieUtil.generateCookie("refreshToken", newRefreshToken));
+        authorize(newAccessToken);
     }
 
     private Optional<String> getToken(HttpServletRequest request) {

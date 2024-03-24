@@ -6,6 +6,7 @@ import codeit.api.security.AuthenticationDeniedHandler;
 import codeit.api.security.OAuth2LoginSuccessHandler;
 import codeit.api.security.OAuth2UserServiceImpl;
 import codeit.api.security.UserDetailsServiceImpl;
+import codeit.common.security.JwtTokenManager;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,8 @@ class RoomControllerTest {
     private ClientRegistrationRepository clientRegistrationRepository;
     @MockBean
     private ChatMongoRepository chatMongoRepository;
+    @MockBean
+    private JwtTokenManager jwtTokenManager;
 
     @Test
     @WithMockCustomUser(role = Role.ROLE_USER)

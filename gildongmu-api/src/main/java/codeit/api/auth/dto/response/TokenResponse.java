@@ -1,10 +1,8 @@
 package codeit.api.auth.dto.response;
 
+import codeit.common.security.CookieUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import org.springframework.http.ResponseCookie;
-
-import java.time.Duration;
 
 
 @Builder
@@ -21,12 +19,6 @@ public record TokenResponse(
     }
 
     public String generateCookie() {
-        return ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .sameSite("Strict")
-                .maxAge(Duration.ofDays(30))
-                .path("/")
-                .build().toString();
+        return CookieUtil.generateCookie("refreshToken", refreshToken);
     }
 }
