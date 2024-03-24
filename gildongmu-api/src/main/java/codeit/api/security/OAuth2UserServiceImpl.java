@@ -23,7 +23,8 @@ public class OAuth2UserServiceImpl implements OAuth2UserService<OAuth2UserReques
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
-        String email = oAuth2User.getAttribute("email");
+        String registration = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+        String email = OAuth2Registration.valueOf(registration).getEmail(oAuth2User);
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> userRepository.save(User.builder().email(email)
                         .role(ROLE_GUEST)
