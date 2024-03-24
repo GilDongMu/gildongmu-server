@@ -4,6 +4,7 @@ import codeit.api.auth.exception.AuthException;
 import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.room.exception.RoomException;
+import codeit.api.user.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,13 @@ import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleUserException(UserException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
 
     @ExceptionHandler(RoomException.class)
     public ResponseEntity<ExceptionResponse<String>> handleRoomException(RoomException e) {

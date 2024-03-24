@@ -53,13 +53,26 @@ public class User extends BaseTimeEntity {
     private List<String> favoriteSpots = new ArrayList<>();
 
     public void registerOAuth2User(String nickname, Gender gender, LocalDate dateOfBirth,
-                                   String bio, List<String> favoriteSpots){
+                                   String bio, List<String> favoriteSpots, String profilePath) {
         this.nickname = nickname;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.bio = bio;
         this.favoriteSpots = favoriteSpots;
         this.role = Role.ROLE_USER;
+        this.profilePath = profilePath;
+    }
+
+    public void update(String nickname, String bio, List<String> favoriteSpots, String profilePath) {
+        this.nickname = nickname;
+        this.bio = bio;
+        this.favoriteSpots = favoriteSpots;
+        this.role = Role.ROLE_USER;
+        this.profilePath = profilePath;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 
     @Builder
