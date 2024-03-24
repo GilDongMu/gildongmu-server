@@ -4,8 +4,8 @@ import codeit.api.exception.ErrorCode;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.exception.OAuth2Exception;
-import codeit.common.security.JwtTokenManager;
 import codeit.api.security.OAuth2LoginUser;
+import codeit.common.security.JwtTokenManager;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,8 @@ public class OAuth2LoginService {
 
     public TokenResponse issueToken(OAuth2LoginUser oAuth2LoginUser) {
         return Optional.ofNullable(oAuth2LoginUser)
-                .map(oAuth2User -> TokenResponse.from(jwtTokenManager.generate(oAuth2User.getUser().getEmail())))
+                .map(oAuth2User -> TokenResponse.of(jwtTokenManager.generateAccessToken(oAuth2User.getUser().getEmail()),
+                        jwtTokenManager.generateRefreshToken(oAuth2User.getUser().getEmail())))
                 .orElseThrow(() -> new OAuth2Exception(ErrorCode.NOT_OAUTH2_USER));
     }
 }

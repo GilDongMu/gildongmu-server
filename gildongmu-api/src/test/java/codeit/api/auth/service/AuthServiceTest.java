@@ -120,11 +120,10 @@ class AuthServiceTest {
         given(userRepository.findByEmail(anyString()))
             .willReturn(Optional.of(userA));
         given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
-        given(jwtTokenManager.generate(anyString()))
-            .willReturn(TokenDto.builder()
-                .accessToken("accessTokenValue")
-                .refreshToken("refreshTokenValue")
-                .build());
+        given(jwtTokenManager.generateAccessToken(anyString()))
+            .willReturn("accessTokenValue");
+        given(jwtTokenManager.generateRefreshToken(anyString()))
+                .willReturn("refreshTokenValue");
         //when
         TokenResponse response = authService.login(request);
         //then

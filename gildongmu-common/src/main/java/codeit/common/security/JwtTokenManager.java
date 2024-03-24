@@ -1,7 +1,7 @@
 package codeit.common.security;
 
-import codeit.common.security.dto.transfer.TokenDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -22,28 +22,27 @@ public class JwtTokenManager {
         encryptKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public TokenDto generate(String email) {
-        long now = System.currentTimeMillis();
-        String accessToken = Jwts.builder()
+    public String generateAccessToken(String email) {
+        return Jwts.builder()
                 .subject(email)
-                .expiration(new Date(now + ACCESS_ALLOWANCE_TIME))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_ALLOWANCE_TIME))
                 .signWith(encryptKey)
                 .compact();
-
-        String refreshToken = Jwts.builder()
-                .expiration(new Date(now + REFRESH_ALLOWANCE_TIME))
-                .signWith(encryptKey)
-                .compact();
-
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
+
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_ALLOWANCE_TIME))
+                .signWith(encryptKey)
+                .compact();
+    }
+
 
     public static boolean validate(String token) {
         try {
             return getClaims(token).getExpiration().after(new Date());
+        } catch (ExpiredJwtException e) {
+            throw e;
         } catch (JwtException e) {
             return false;
         }
