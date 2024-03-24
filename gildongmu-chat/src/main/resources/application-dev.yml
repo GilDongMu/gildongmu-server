@@ -18,6 +18,7 @@ spring:
     redis:
       password: ${REDIS_PASSWORD}
       timeout: 600ms
+      host: ${REDIS_HOST}
 
 jwt:
   secret: ${JWT_SECRET}
