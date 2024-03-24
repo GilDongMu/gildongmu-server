@@ -17,7 +17,6 @@ public enum ErrorCode {
     // room
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 소통 방이 없습니다."),
     UNAUTHORIZED_PARTICIPANTS(HttpStatus.BAD_REQUEST, "소통 방 권한이 없는 유저입니다."),
-    ;
     //post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 없습니다.");
     private final HttpStatus httpStatus;
