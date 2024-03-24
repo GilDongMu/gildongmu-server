@@ -26,7 +26,8 @@ public class OAuth2LoginService {
         User savedUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new OAuth2Exception(ErrorCode.USER_NOT_FOUND));
 
-        savedUser.registerOAuth2User(request.getNickname(), request.getGender(), request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots());
+        savedUser.registerOAuth2User(request.getNickname(), request.getGender(),
+                request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), null);
     }
 
     public TokenResponse issueToken(OAuth2LoginUser oAuth2LoginUser) {
