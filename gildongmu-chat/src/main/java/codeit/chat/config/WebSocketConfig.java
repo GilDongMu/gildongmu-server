@@ -29,10 +29,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.setErrorHandler(stompSubProtocolErrorHandler);
         registry.addEndpoint("/group-chat")
-                .setAllowedOriginPatterns("*")
+                .setAllowedOrigins("http://localhost:3000", "https://apic.app", "http://localhost:8081")
                 .setHandshakeHandler(defaultHandshakeHandler);
         registry.addEndpoint("/group-chat")
-                .setAllowedOriginPatterns("*")
+                .setAllowedOrigins("http://localhost:3000", "https://apic.app", "http://localhost:8081")
                 .setHandshakeHandler(defaultHandshakeHandler)
                 .withSockJS();
     }
