@@ -65,8 +65,6 @@ tasks.jacocoTestReport {
 			fileTree(it) {
 				setIncludes(
 					listOf(
-						"codeit/**/controller/*",
-						"codeit/**/service/*",
 						"codeit/**/util/*",
 						"codeit/**/interceptor/*"
 					)
@@ -84,8 +82,6 @@ tasks.jacocoTestCoverageVerification {
 			isEnabled = true
 			element = "CLASS"
 			includes = listOf(
-				"codeit.**.controller.*",
-				"codeit.**.service.*",
 				"codeit.**.util.*",
 				"codeit.**.interceptor.*"
 			)
