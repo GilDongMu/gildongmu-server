@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    //global
+    // global
     REQUEST_ARGUMENT_NOT_VALID(HttpStatus.BAD_REQUEST, "요청 파라미터를 확인해주세요."),
     // user
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 유저가 없습니다."),
@@ -17,7 +17,7 @@ public enum ErrorCode {
     // room
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 소통 방이 없습니다."),
     UNAUTHORIZED_PARTICIPANTS(HttpStatus.BAD_REQUEST, "소통 방 권한이 없는 유저입니다."),
-    //post
+    // post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 없습니다."),
     // participant
     ALREADY_REGISTERED_PARTICIPANT(HttpStatus.BAD_REQUEST, "이미 참여 신청한 유저입니다."),

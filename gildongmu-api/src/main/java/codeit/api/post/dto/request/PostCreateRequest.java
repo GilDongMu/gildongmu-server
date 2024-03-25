@@ -37,17 +37,17 @@ public record PostCreateRequest(
                 return MemberGender.valueOf(this.gender);
         }
 
-    public Post toEntity(User user){
-        return Post.builder()
-                .title(title)
-                .content(content)
-                .destination(destination)
-                .startDate(tripDate.get(0))
-                .endDate(tripDate.get(tripDate.size() - 1))
-                .memberGender(memberGender)
-                .participants(numberOfPeople)
-                .user(user)
-                .build();
-    }
+        public Post toEntity(User user){
+                return Post.builder()
+                        .title(title)
+                        .content(content)
+                        .destination(destination)
+                        .startDate(tripDate.get(0))
+                        .endDate(tripDate.get(tripDate.size() - 1))
+                        .memberGender(memberGender)
+                        .participants(numberOfPeople)
+                        .user(user)
+                        .build();
+        }
     */
 }
