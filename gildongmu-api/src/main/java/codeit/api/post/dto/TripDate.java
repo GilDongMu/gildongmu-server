@@ -1,7 +1,6 @@
 package codeit.api.post.dto;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -2,18 +2,10 @@ package codeit.api.post.dto.request;
 
 import codeit.api.post.dto.TripDate;
 import codeit.common.validator.EnumValue;
-import codeit.domain.Image.entity.Image;
 import codeit.domain.post.constant.MemberGender;
-import codeit.domain.post.entity.Post;
-import codeit.domain.user.constant.Gender;
-import codeit.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.cglib.core.Local;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public record PostCreateRequest(
