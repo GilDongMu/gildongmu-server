@@ -1,11 +1,8 @@
 package codeit.api.post.dto.response;
 
 import codeit.api.post.dto.TripDate;
-import codeit.domain.post.entity.Post;
 
-import java.security.PrivateKey;
 import java.util.List;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -26,7 +23,7 @@ public record PostListResponse(
         String title,
         String nickname,
         String destination,
-        List<TripDate> tripDate,
+        TripDate tripDate,
         Short numberOfPeople,
         String gender,
         String content,

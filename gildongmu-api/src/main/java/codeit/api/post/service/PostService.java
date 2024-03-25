@@ -11,8 +11,6 @@ import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.exception.PostException;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
-import codeit.domain.TagMap.Entity.TagMap;
-import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -20,21 +18,15 @@ import codeit.domain.post.repository.PostRepository;
 import codeit.domain.tag.entity.Tag;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
-import com.fasterxml.jackson.core.format.DataFormatDetector;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PostUpdate;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.query.JpaQueryCreator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -92,9 +84,9 @@ public class PostService {
             post.getTitle(),
             post.getUser().getNickname(),
             post.getDestination(),
-            TripDate.toList(post.getStartDate(), post.getEndDate()),
+            TripDate.of(post.getStartDate(), post.getEndDate()),
             post.getParticipants(),
-            post.getMemberGender().getCode(),
+            post.getMemberGender().toString(),
             post.getContent(),
             post.getStatus().getCode(),
             tagList,
@@ -164,9 +156,9 @@ public class PostService {
             .title(postRequest.title())
             .content(postRequest.content())
             .destination(postRequest.destination())
-            .startDate(postRequest.tripDate().get(0).startDate())
-            .endDate(postRequest.tripDate().get(0).endDate())
-            .memberGender(MemberGender.from(postRequest.gender()))
+            .startDate(postRequest.tripDate().startDate())
+            .endDate(postRequest.tripDate().endDate())
+            .memberGender(MemberGender.valueOf(postRequest.gender()))
             .participants(postRequest.numberOfPeople())
             .status(Status.OPEN)
             .build();
@@ -198,9 +190,9 @@ public class PostService {
         post.updateTitle(postUpdateRequest.title());
         post.updateContent(postUpdateRequest.content());
         post.updateDestination(postUpdateRequest.destination());
-        post.updateStartDate(postUpdateRequest.tripDate().get(0).startDate());
-        post.updateEndDate(postUpdateRequest.tripDate().get(0).endDate());
-        post.updateGender(MemberGender.from(postUpdateRequest.gender()));
+        post.updateStartDate(postUpdateRequest.tripDate().startDate());
+        post.updateEndDate(postUpdateRequest.tripDate().endDate());
+        post.updateGender(MemberGender.valueOf(postUpdateRequest.gender()));
         post.updateParticipants(postUpdateRequest.numberOfPeople());
 
         //TODO ==> ImageService 분리

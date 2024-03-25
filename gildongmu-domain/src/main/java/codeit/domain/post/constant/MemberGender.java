@@ -7,10 +7,11 @@ import java.util.Arrays;
 
 @Getter
 public enum MemberGender {
-    FEMALE("여자만"),
-    MALE("남자만"),
-    NONE("무관");
+    FEMALE,
+    MALE,
+    NONE;
 
+    /*
     private final String code;
 
     MemberGender(String code) {
@@ -23,4 +24,5 @@ public enum MemberGender {
                 .findAny()
                 .orElseThrow(() -> new RuntimeException("Not Found Gender of Member"));
     }
+    */
 }

@@ -57,6 +57,10 @@ public class PostController {
             @AuthenticationPrincipal UserPrincipal auth,
             @RequestBody @Valid PostCreateRequest postCreateRequest) {
 
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         postService.createPost(postCreateRequest, auth.getUsername());
         return ResponseEntity.ok().build();
     }
