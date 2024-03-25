@@ -28,8 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -106,7 +105,7 @@ class UserControllerTest {
         //given
         PasswordCheckRequest request = new PasswordCheckRequest("my-password");
         //when
-        mockMvc.perform(get("/users/me/check-password")
+        mockMvc.perform(post("/users/me/check-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8)))
                 .andDo(print())
