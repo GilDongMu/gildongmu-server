@@ -13,10 +13,18 @@ public record TripDate(
     LocalDate endDate
 ) {
 
+    public static TripDate of(LocalDate startDate, LocalDate endDate) {
+        return TripDate.builder()
+            .startDate(startDate)
+            .endDate(endDate)
+            .build();
+    }
+/*
     public static List<TripDate> toList(LocalDate startDate, LocalDate endDate) {
         return List.of(TripDate.builder()
             .startDate(startDate)
             .endDate(endDate)
             .build());
     }
+ */
 }

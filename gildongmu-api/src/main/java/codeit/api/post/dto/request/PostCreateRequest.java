@@ -16,7 +16,7 @@ public record PostCreateRequest(
         String destination,
 
         @NotNull(message = "Trip Date cannot be null")
-        List<TripDate> tripDate,
+        TripDate tripDate,
 
         Short numberOfPeople,
 

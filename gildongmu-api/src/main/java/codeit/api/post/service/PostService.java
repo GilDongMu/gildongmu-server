@@ -84,7 +84,7 @@ public class PostService {
             post.getTitle(),
             post.getUser().getNickname(),
             post.getDestination(),
-            TripDate.toList(post.getStartDate(), post.getEndDate()),
+            TripDate.of(post.getStartDate(), post.getEndDate()),
             post.getParticipants(),
             post.getMemberGender().toString(),
             post.getContent(),
@@ -156,8 +156,8 @@ public class PostService {
             .title(postRequest.title())
             .content(postRequest.content())
             .destination(postRequest.destination())
-            .startDate(postRequest.tripDate().get(0).startDate())
-            .endDate(postRequest.tripDate().get(0).endDate())
+            .startDate(postRequest.tripDate().startDate())
+            .endDate(postRequest.tripDate().endDate())
             .memberGender(MemberGender.valueOf(postRequest.gender()))
             .participants(postRequest.numberOfPeople())
             .status(Status.OPEN)
@@ -190,8 +190,8 @@ public class PostService {
         post.updateTitle(postUpdateRequest.title());
         post.updateContent(postUpdateRequest.content());
         post.updateDestination(postUpdateRequest.destination());
-        post.updateStartDate(postUpdateRequest.tripDate().get(0).startDate());
-        post.updateEndDate(postUpdateRequest.tripDate().get(0).endDate());
+        post.updateStartDate(postUpdateRequest.tripDate().startDate());
+        post.updateEndDate(postUpdateRequest.tripDate().endDate());
         post.updateGender(MemberGender.valueOf(postUpdateRequest.gender()));
         post.updateParticipants(postUpdateRequest.numberOfPeople());
 

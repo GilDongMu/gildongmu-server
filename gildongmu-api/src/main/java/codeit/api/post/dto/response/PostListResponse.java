@@ -23,7 +23,7 @@ public record PostListResponse(
         String title,
         String nickname,
         String destination,
-        List<TripDate> tripDate,
+        TripDate tripDate,
         Short numberOfPeople,
         String gender,
         String content,
