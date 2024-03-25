@@ -55,6 +55,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         authorize -> authorize
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
+                                .requestMatchers("/posts/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
                 )
