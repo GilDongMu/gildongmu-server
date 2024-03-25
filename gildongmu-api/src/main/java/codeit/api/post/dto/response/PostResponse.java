@@ -36,7 +36,7 @@ public record PostResponse(
                 post.getDestination(),
                 TripDate.toList(post.getStartDate(), post.getEndDate()),
                 post.getParticipants(),
-                post.getMemberGender().getCode(),
+                post.getMemberGender().toString(),
                 post.getContent(),
                 post.getStatus().getCode(),
                 tagNames,

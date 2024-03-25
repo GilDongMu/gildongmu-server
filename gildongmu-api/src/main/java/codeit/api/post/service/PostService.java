@@ -94,7 +94,7 @@ public class PostService {
             post.getDestination(),
             TripDate.toList(post.getStartDate(), post.getEndDate()),
             post.getParticipants(),
-            post.getMemberGender().getCode(),
+            post.getMemberGender().toString(),
             post.getContent(),
             post.getStatus().getCode(),
             tagList,
@@ -166,7 +166,7 @@ public class PostService {
             .destination(postRequest.destination())
             .startDate(postRequest.tripDate().get(0).startDate())
             .endDate(postRequest.tripDate().get(0).endDate())
-            .memberGender(MemberGender.from(postRequest.gender()))
+            .memberGender(MemberGender.valueOf(postRequest.gender()))
             .participants(postRequest.numberOfPeople())
             .status(Status.OPEN)
             .build();
@@ -200,7 +200,7 @@ public class PostService {
         post.updateDestination(postUpdateRequest.destination());
         post.updateStartDate(postUpdateRequest.tripDate().get(0).startDate());
         post.updateEndDate(postUpdateRequest.tripDate().get(0).endDate());
-        post.updateGender(MemberGender.from(postUpdateRequest.gender()));
+        post.updateGender(MemberGender.valueOf(postUpdateRequest.gender()));
         post.updateParticipants(postUpdateRequest.numberOfPeople());
 
         //TODO ==> ImageService 분리

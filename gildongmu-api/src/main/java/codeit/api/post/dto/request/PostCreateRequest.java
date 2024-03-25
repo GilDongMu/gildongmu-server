@@ -1,6 +1,7 @@
 package codeit.api.post.dto.request;
 
 import codeit.api.post.dto.TripDate;
+import codeit.common.validator.EnumValue;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.entity.Post;
@@ -28,6 +29,7 @@ public record PostCreateRequest(
         Short numberOfPeople,
 
         @NotNull(message = "Member Gender cannot be null")
+        @EnumValue(enumClass = MemberGender.class, message = "invalid gender")
         String gender,
 
         @NotBlank(message = "Content is required.")
@@ -42,9 +44,7 @@ public record PostCreateRequest(
         public MemberGender getMemberGender() {
                 return MemberGender.valueOf(this.gender);
         }
-*/
 
-    /*
     public Post toEntity(User user){
         return Post.builder()
                 .title(title)
