@@ -69,7 +69,8 @@ public class PostService {
             postPage.getNumber(),
             postPage.getSort(),
             postPage.getNumberOfElements(),
-            postPage.isEmpty()
+            postPage.isEmpty(),
+            postPage.getTotalPages()
         );
     }
 

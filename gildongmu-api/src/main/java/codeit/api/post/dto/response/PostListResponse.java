@@ -15,7 +15,8 @@ public record PostListResponse(
     int number,
     Sort sort,
     int numberOfElements,
-    boolean empty
+    boolean empty,
+    int totalPages
 
 ) {
     public record PostListItemResponse(
