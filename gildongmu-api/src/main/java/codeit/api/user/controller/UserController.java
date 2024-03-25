@@ -33,8 +33,8 @@ public class UserController {
 
     @Operation(summary = "비밀번호 검증")
     @ApiResponse
-    @GetMapping("/check-password")
-    private ResponseEntity<PasswordCheckResponse> checkMyPassword(@RequestBody PasswordCheckRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    @PostMapping("/check-password")
+    private ResponseEntity<PasswordCheckResponse> checkMyPassword(@Valid @RequestBody PasswordCheckRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(userService.checkMyPassword(request, principal.getUser()));
     }
 
