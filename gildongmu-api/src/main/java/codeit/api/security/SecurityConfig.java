@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -56,7 +57,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         authorize -> authorize
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
-                                .requestMatchers("/posts/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
                 )
