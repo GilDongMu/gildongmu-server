@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         authorize -> authorize
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
