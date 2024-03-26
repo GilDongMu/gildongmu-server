@@ -1,6 +1,6 @@
 name: deployment api on develop server
 on:
-  pull_request:
+  push-:
     branches:
       - develop
 jobs:
@@ -45,6 +45,7 @@ jobs:
             PROFILE=dev
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI_DEVELOP }}
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
             KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI_DEVELOP }}
