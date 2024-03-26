@@ -103,5 +103,19 @@ class ParticipantControllerTest {
         //then
     }
 
+    @Test
+    @WithMockCustomUser(role = Role.ROLE_USER)
+    @DisplayName("참여자 목록 조회 성공")
+    void retrieveParticipantsTest_success() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get("/posts/{postId}/participants", 1L)
+                        .param("status", "PENDING")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
 
 }

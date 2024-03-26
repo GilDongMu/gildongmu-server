@@ -1,8 +1,8 @@
-package codeit.api.participant;
+package codeit.api.participant.service;
 
 import codeit.api.exception.ErrorCode;
+import codeit.api.participant.dto.ParticipantResponse;
 import codeit.api.participant.exception.ParticipantException;
-import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.exception.PostException;
 import codeit.domain.participant.constant.ParticipantStatus;
 import codeit.domain.participant.entity.Participant;
@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,10 +48,18 @@ class ParticipantServiceTest {
             .password("encoded")
             .build();
 
+    User userC = User.builder()
+            .email("userC@google.com")
+            .nickname("c")
+            .role(Role.ROLE_USER)
+            .password("encoded")
+            .build();
+
     @BeforeAll
     static void init() {
         userA = mock(User.class);
         given(userA.getId()).willReturn(1L);
+        given(userA.getNickname()).willReturn("a");
         post = mock(Post.class);
         given(post.getId()).willReturn(1L);
     }
@@ -108,7 +117,7 @@ class ParticipantServiceTest {
                 .isLeader(false)
                 .post(post)
                 .build();
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+        given(participantRepository.findByUserIdAndPostIdAndStatusIsNot(anyLong(), anyLong(), any()))
                 .willReturn(Optional.of(participant));
         //when
         participantService.exitParticipant(1L, userA);
@@ -120,7 +129,7 @@ class ParticipantServiceTest {
     @DisplayName("여행글 참여 취소 실패-PARTICIPANT_NOT_FOUND")
     void exitParticipantTest_fail_PARTICIPANT_NOT_FOUND() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+        given(participantRepository.findByUserIdAndPostIdAndStatusIsNot(anyLong(), anyLong(), any()))
                 .willReturn(Optional.empty());
         //when
         ParticipantException e = assertThrows(ParticipantException.class,
@@ -255,5 +264,115 @@ class ParticipantServiceTest {
         assertEquals(ErrorCode.PARTICIPANT_NOT_FOUND, e.getErrorCode());
     }
 
+    @Test
+    @DisplayName("신청자 조회 성공")
+    void retrieveParticipantsTest_success_WhenRetrievingPendingUser() {
+        //given
+        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+                .willReturn(Optional.of(Participant.builder()
+                        .user(userA)
+                        .status(ParticipantStatus.ACCEPTED)
+                        .isLeader(true)
+                        .post(post)
+                        .build()));
+        given(participantRepository.findByPostIdAndStatus(anyLong(), any()))
+                .willReturn(List.of(Participant.builder()
+                                .user(userB)
+                                .status(ParticipantStatus.PENDING)
+                                .isLeader(false)
+                                .post(post)
+                                .build(),
+                        Participant.builder()
+                                .user(userC)
+                                .status(ParticipantStatus.PENDING)
+                                .isLeader(false)
+                                .post(post)
+                                .build()));
+        //when
+        List<ParticipantResponse> response = participantService.retrieveParticipants(1L, userA, "PENDING");
+        //then
+        assertEquals("b", response.get(0).user().nickname());
+        assertEquals("c", response.get(1).user().nickname());
+    }
+
+    @Test
+    @DisplayName("신청자 조회 실패-NOT_LEADER_USER")
+    void retrieveParticipantsTest_fail_NOT_LEADER_USER_WhenRetrievingPendingUser() {
+        //given
+        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+                .willReturn(Optional.of(Participant.builder()
+                        .user(userA)
+                        .status(ParticipantStatus.ACCEPTED)
+                        .isLeader(false)
+                        .post(post)
+                        .build()));
+        //when
+        ParticipantException e = assertThrows(ParticipantException.class,
+                () -> participantService.retrieveParticipants(1L, userA, "PENDING"));
+        //then
+        assertEquals(ErrorCode.NOT_LEADER_USER, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("참여자 조회 성공-참여중")
+    void retrieveParticipantsTest_success_WhenRetrievingAcceptedUser() {
+        //given
+        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+                .willReturn(Optional.of(Participant.builder()
+                        .user(userA)
+                        .status(ParticipantStatus.ACCEPTED)
+                        .isLeader(false)
+                        .post(post)
+                        .build()));
+        given(participantRepository.findByPostIdAndStatus(anyLong(), any()))
+                .willReturn(List.of(Participant.builder()
+                                .user(userB)
+                                .status(ParticipantStatus.ACCEPTED)
+                                .isLeader(false)
+                                .post(post)
+                                .build(),
+                        Participant.builder()
+                                .user(userA)
+                                .status(ParticipantStatus.ACCEPTED)
+                                .isLeader(false)
+                                .post(post)
+                                .build(),
+                        Participant.builder()
+                                .user(userC)
+                                .status(ParticipantStatus.ACCEPTED)
+                                .isLeader(true)
+                                .post(post)
+                                .build()));
+        //when
+        List<ParticipantResponse> response = participantService.retrieveParticipants(1L, userA, "ACCEPTED");
+        //then
+        assertEquals("a", response.get(0).user().nickname());
+        assertTrue(response.get(0).user().isCurrentUser());
+        assertFalse(response.get(0).isLeader());
+        assertEquals("c", response.get(1).user().nickname());
+        assertFalse(response.get(1).user().isCurrentUser());
+        assertTrue(response.get(1).isLeader());
+        assertEquals("b", response.get(2).user().nickname());
+        assertFalse(response.get(2).user().isCurrentUser());
+        assertFalse(response.get(2).isLeader());
+    }
+
+    @Test
+    @DisplayName("참여자 조회 실패-NOT_PARTICIPANT_USER-참여중")
+    void retrieveParticipantsTest_fail_NOT_PARTICIPANT_USER_WhenRetrievingAcceptedUser() {
+        //given
+        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+                .willReturn(Optional.of(Participant.builder()
+                        .user(userA)
+                        .status(ParticipantStatus.PENDING)
+                        .isLeader(false)
+                        .post(post)
+                        .build()));
+        //when
+        ParticipantException e = assertThrows(ParticipantException.class,
+                () -> participantService.retrieveParticipants(1L, userA, "ACCEPTED"));
+        //then
+        assertEquals(ErrorCode.NOT_PARTICIPANT_USER, e.getErrorCode());
+    }
 
 }
