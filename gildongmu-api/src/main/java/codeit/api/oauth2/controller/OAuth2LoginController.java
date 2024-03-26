@@ -40,7 +40,9 @@ public class OAuth2LoginController {
                                           @Valid @RequestPart OAuth2SignUpRequest request,
                                           @Valid @RequestPart(required = false) MultipartFile image) {
         oAuth2LoginService.register(oAuth2LoginUser.getUser(), request, image);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+                .header(HttpHeaders.LOCATION, "/oauth2/login")
+                .build();
     }
 
 
@@ -51,6 +53,7 @@ public class OAuth2LoginController {
         TokenResponse response = oAuth2LoginService.issueToken(oAuth2LoginUser);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, response.generateCookie())
-                .body(response);
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.accessToken())
+                .build();
     }
 }
