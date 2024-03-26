@@ -3,11 +3,8 @@ package codeit.api.security;
 import codeit.common.security.JwtTokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -25,8 +22,10 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -41,18 +40,15 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public FilterRegistrationBean<CorsFilter> corsFilterFilterRegistrationBean() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:3000");
-        corsConfig.addAllowedHeader("*");
-        corsConfig.addAllowedMethod("*");
-        corsConfig.setAllowCredentials(true);
-
+    public CorsConfigurationSource corsFilterFilterRegistrationBean() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
-
-        return new FilterRegistrationBean<>(new CorsFilter(source));
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 
