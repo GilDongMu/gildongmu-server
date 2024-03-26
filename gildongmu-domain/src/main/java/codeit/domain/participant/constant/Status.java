@@ -1,5 +1,5 @@
 package codeit.domain.participant.constant;
 
-public enum ParticipantStatus {
+public enum Status {
     PENDING, ACCEPTED, DELETED
 }

@@ -3,6 +3,9 @@ package codeit.api.post.dto.response;
 import codeit.api.post.dto.TripDate;
 
 import java.util.List;
+
+import codeit.domain.post.entity.Post;
+import lombok.Builder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 

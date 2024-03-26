@@ -1,7 +1,7 @@
-package codeit.api.participant.controller;
+package codeit.api.post.controller;
 
 import codeit.api.config.WithMockCustomUser;
-import codeit.api.participant.service.ParticipantService;
+import codeit.api.post.service.PostService;
 import codeit.api.security.AuthenticationDeniedHandler;
 import codeit.api.security.OAuth2LoginSuccessHandler;
 import codeit.api.security.OAuth2UserServiceImpl;
@@ -21,13 +21,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ParticipantController.class)
+@WebMvcTest(controllers = PostController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class ParticipantControllerTest {
+class PostControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -49,73 +49,18 @@ class ParticipantControllerTest {
     @MockBean
     private JwtTokenManager jwtTokenManager;
     @MockBean
-    private ParticipantService participantService;
-
+    private PostService postService;
     @Test
     @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("여행글 신청 성공")
-    void applyForParticipantTest_success() throws Exception {
-        //given
-        //when
-        mockMvc.perform(post("/posts/{postId}/participants", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isCreated());
-        //then
-    }
-
-    @Test
-    @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("여행글 신청 취소 및 참여 취소 성공")
-    void exitParticipantTest_success() throws Exception {
-        //given
-        //when
-        mockMvc.perform(delete("/posts/{postId}/participants", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
-        //then
-    }
-
-    @Test
-    @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("신청자 거절 및 추방")
-    void denyParticipantTest_success() throws Exception {
-        //given
-        //when
-        mockMvc.perform(delete("/posts/{postId}/participants/{participantId}", 1L, 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
-        //then
-    }
-
-    @Test
-    @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("신청자 수락")
-    void acceptParticipantTest_success() throws Exception {
-        //given
-        //when
-        mockMvc.perform(put("/posts/{postId}/participants/{participantId}", 1L, 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
-        //then
-    }
-
-    @Test
-    @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("참여자 목록 조회 성공")
+    @DisplayName("참여중 및 모집중 동행 글 리스트 조회 성공")
     void retrieveParticipantsTest_success() throws Exception {
         //given
         //when
-        mockMvc.perform(get("/posts/{postId}/participants", 1L)
-                        .param("status", "PENDING")
+        mockMvc.perform(get("/posts/me", 1L)
+                        .param("type", "LEADER")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
         //then
     }
-
-
 }

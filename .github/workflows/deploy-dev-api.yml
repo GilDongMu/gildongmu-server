@@ -1,6 +1,6 @@
 name: deployment api on develop server
 on:
-  push-:
+  push:
     branches:
       - develop
 jobs:
