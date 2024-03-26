@@ -98,8 +98,8 @@ public class ParticipantService {
     }
 
     private List<ParticipantResponse> retrieveAcceptedParticipants(Long postId, User user) {
-        validateAcceptedParticipant(user.getId(), postId);
-        return participantRepository.findByPostIdAndStatus(postId, Status.ACCEPTED)
+        validateParticipantUser(user.getId(), postId);
+        return participantRepository.findByPostIdAndStatusOrPostIdAndUser(postId, Status.ACCEPTED, postId, user)
                 .stream().map(participant -> ParticipantResponse.from(participant, user.getId()))
                 .sorted((o1, o2) -> {
                     if (o1.user().isCurrentUser() == o2.user().isCurrentUser())
@@ -109,8 +109,8 @@ public class ParticipantService {
                 .collect(Collectors.toList());
     }
 
-    private void validateAcceptedParticipant(Long userId, Long postId) {
-        if (!participantRepository.existsByUserIdAndPostIdAndStatus(userId, postId, Status.ACCEPTED))
+    private void validateParticipantUser(Long userId, Long postId) {
+        if (!participantRepository.existsByUserIdAndPostIdAndStatusIsNot(userId, postId, Status.DELETED))
             throw new ParticipantException(ErrorCode.NOT_PARTICIPANT_USER);
     }
 

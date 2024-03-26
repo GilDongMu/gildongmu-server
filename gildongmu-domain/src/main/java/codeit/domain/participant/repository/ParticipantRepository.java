@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     boolean existsByUserAndPost(User user, Post post);
 
-    boolean existsByUserIdAndPostIdAndStatus(Long userId, Long postId, Status status);
+    boolean existsByUserIdAndPostIdAndStatusIsNot(Long userId, Long postId, Status status);
 
     Optional<Participant> findByUserIdAndPostId(Long userId, Long postId);
 
@@ -23,4 +23,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Participant> findByPostIdAndStatus(Long postId, Status status);
+    @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
+    List<Participant> findByPostIdAndStatusOrPostIdAndUser(Long postId, Status status, Long postId2, User user);
 }

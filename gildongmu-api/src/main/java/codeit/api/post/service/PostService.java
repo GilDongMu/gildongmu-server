@@ -11,6 +11,7 @@ import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.exception.PostException;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
+import codeit.api.post.dto.request.RetrievingType;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -19,17 +20,18 @@ import codeit.domain.tag.entity.Tag;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static codeit.api.exception.ErrorCode.POST_NOT_FOUND;
 import static codeit.api.exception.ErrorCode.USER_NOT_FOUND;
@@ -57,43 +59,43 @@ public class PostService {
         }
 
         List<PostListItemResponse> postListItems = postPage.getContent().stream()
-            .map(this::mapToPostListItem)
-            .collect(Collectors.toList());
+                .map(this::mapToPostListItem)
+                .collect(Collectors.toList());
 
         return new PostListResponse(
-            postListItems,
-            postPage.getPageable(),
-            postPage.isFirst(),
-            postPage.isLast(),
-            postPage.getSize(),
-            postPage.getNumber(),
-            postPage.getSort(),
-            postPage.getNumberOfElements(),
-            postPage.isEmpty(),
-            postPage.getTotalPages()
+                postListItems,
+                postPage.getPageable(),
+                postPage.isFirst(),
+                postPage.isLast(),
+                postPage.getSize(),
+                postPage.getNumber(),
+                postPage.getSort(),
+                postPage.getNumberOfElements(),
+                postPage.isEmpty(),
+                postPage.getTotalPages()
         );
     }
 
     private PostListItemResponse mapToPostListItem(Post post) {
         List<Tag> tags = tagService.findTagListByPost(post);
         List<String> tagList = tags.stream()
-            .map(Tag::getTagName)
-            .collect(Collectors.toList());
+                .map(Tag::getTagName)
+                .collect(Collectors.toList());
 
         return new PostListItemResponse(
-            post.getId(),
-            post.getTitle(),
-            post.getUser().getNickname(),
-            post.getDestination(),
-            TripDate.of(post.getStartDate(), post.getEndDate()),
-            post.getParticipants(),
-            post.getMemberGender().toString(),
-            post.getContent(),
-            post.getStatus().getCode(),
-            tagList,
-            post.getThumbnail(),
-            (long) post.getComments().size(),
-            post.getBookmarkCount()
+                post.getId(),
+                post.getTitle(),
+                post.getUser().getNickname(),
+                post.getDestination(),
+                TripDate.of(post.getStartDate(), post.getEndDate()),
+                post.getParticipants(),
+                post.getMemberGender().toString(),
+                post.getContent(),
+                post.getStatus().getCode(),
+                tagList,
+                post.getThumbnail(),
+                (long) post.getComments().size(),
+                post.getBookmarkCount()
         );
     }
 
@@ -153,25 +155,25 @@ public class PostService {
                 .orElseThrow(() -> new PostException(USER_NOT_FOUND));
 
         Post post = Post.builder()
-            .user(user)
-            .title(postRequest.title())
-            .content(postRequest.content())
-            .destination(postRequest.destination())
-            .startDate(postRequest.tripDate().startDate())
-            .endDate(postRequest.tripDate().endDate())
-            .memberGender(MemberGender.valueOf(postRequest.gender()))
-            .participants(postRequest.numberOfPeople())
-            .status(Status.OPEN)
-            .build();
+                .user(user)
+                .title(postRequest.title())
+                .content(postRequest.content())
+                .destination(postRequest.destination())
+                .startDate(postRequest.tripDate().startDate())
+                .endDate(postRequest.tripDate().endDate())
+                .memberGender(MemberGender.valueOf(postRequest.gender()))
+                .participants(postRequest.numberOfPeople())
+                .status(Status.OPEN)
+                .build();
 
         //TODO => ImageService 분리
         List<ImageCreateRequest> images = postRequest.images();
 
         for (ImageCreateRequest imageCreateRequest : images) {
             Image image = Image.builder()
-                .url(imageCreateRequest.url())
-                .post(post)
-                .build();
+                    .url(imageCreateRequest.url())
+                    .post(post)
+                    .build();
 
             if (imageCreateRequest.thumbnail())
                 post.add(image.getUrl());
@@ -186,7 +188,7 @@ public class PostService {
 
     public PostResponse updatePost(Long postId, PostUpdateRequest postUpdateRequest) {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         post.updateTitle(postUpdateRequest.title());
         post.updateContent(postUpdateRequest.content());
@@ -207,9 +209,9 @@ public class PostService {
         List<Image> updatedImages = new ArrayList<>();
         for (ImageCreateRequest imageCreateRequest : images) {
             Image image = Image.builder()
-                .url(imageCreateRequest.url())
-                .post(post)
-                .build();
+                    .url(imageCreateRequest.url())
+                    .post(post)
+                    .build();
             updatedImages.add(image);
             imageRepository.save(image);
 
@@ -228,10 +230,18 @@ public class PostService {
 
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-            .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         tagService.deleteTag(post);
         postRepository.delete(post);
+    }
+
+    public Slice<PostListItemResponse> retrieveMyPosts(User user, String type, Pageable pageable) {
+        if (RetrievingType.LEADER.name().equals(type))
+            return postRepository.findByUserOrderByStatusDesc(user, pageable)
+                    .map(this::mapToPostListItem);
+        return postRepository.findByParticipantUserOrderByStatusDesc(user.getId(), pageable)
+                .map(this::mapToPostListItem);
     }
 
 }

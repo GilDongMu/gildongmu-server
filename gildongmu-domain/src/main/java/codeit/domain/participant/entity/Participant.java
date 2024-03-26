@@ -15,7 +15,9 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "participants")
+@Table(name = "participants", indexes = {
+        @Index(name = "idx_post_id", columnList = "post_id")
+})
 public class Participant extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
