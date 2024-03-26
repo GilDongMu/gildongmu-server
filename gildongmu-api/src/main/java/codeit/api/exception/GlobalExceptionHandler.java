@@ -3,8 +3,11 @@ package codeit.api.exception;
 import codeit.api.auth.exception.AuthException;
 import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
+import codeit.api.participant.exception.ParticipantException;
 import codeit.api.room.exception.RoomException;
 import codeit.api.user.exception.UserException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 
@@ -21,6 +25,22 @@ import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse<List<String>>> handleUserException(ConstraintViolationException e) {
+        List<String> messages = e.getConstraintViolations()
+                .stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), REQUEST_ARGUMENT_NOT_VALID, REQUEST_ARGUMENT_NOT_VALID.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse<>(REQUEST_ARGUMENT_NOT_VALID.name(), messages));
+    }
+
+    @ExceptionHandler(ParticipantException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleParticipantException(ParticipantException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ExceptionResponse<String>> handleUserException(UserException e) {

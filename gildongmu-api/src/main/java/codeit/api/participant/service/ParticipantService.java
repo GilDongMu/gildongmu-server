@@ -1,6 +1,7 @@
 package codeit.api.participant.service;
 
 import codeit.api.exception.ErrorCode;
+import codeit.api.participant.dto.ParticipantResponse;
 import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
 import codeit.domain.participant.constant.ParticipantStatus;
@@ -13,7 +14,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,7 @@ public class ParticipantService {
 
     @Transactional
     public void exitParticipant(Long postId, User user) {
-        Participant participant = participantRepository.findByUserIdAndPostId(user.getId(), postId)
+        Participant participant = participantRepository.findByUserIdAndPostIdAndStatusIsNot(user.getId(), postId, ParticipantStatus.DELETED)
                 .orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
         participant.delete();
     }
@@ -67,7 +70,8 @@ public class ParticipantService {
         validateLeaderUser(user.getId(), postId);
 
         Participant participantToBeAccepted = participantRepository.findById(participantId)
-                .stream().filter(participant -> Objects.equals(participant.getPost().getId(), postId))
+                .stream().filter(participant -> Objects.equals(participant.getPost().getId(), postId)
+                        && Objects.equals(participant.getStatus(), ParticipantStatus.PENDING))
                 .findFirst().orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
 
         participantToBeAccepted.accept();
@@ -77,5 +81,37 @@ public class ParticipantService {
         participantRepository.findByUserIdAndPostId(userId, postId)
                 .stream().filter(Participant::isLeader).findFirst()
                 .orElseThrow(() -> new ParticipantException(ErrorCode.NOT_LEADER_USER));
+    }
+
+    public List<ParticipantResponse> retrieveParticipants(Long postId, User user, String status) {
+        if (ParticipantStatus.PENDING.name().equals(status))
+            return retrievePendingParticipants(postId, user);
+        return retrieveAcceptedParticipants(postId, user);
+    }
+
+
+    private List<ParticipantResponse> retrievePendingParticipants(Long postId, User user) {
+        validateLeaderUser(user.getId(), postId);
+        return participantRepository.findByPostIdAndStatus(postId, ParticipantStatus.PENDING)
+                .stream().map(ParticipantResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    private List<ParticipantResponse> retrieveAcceptedParticipants(Long postId, User user) {
+        validateAcceptedParticipant(user.getId(), postId);
+        return participantRepository.findByPostIdAndStatus(postId, ParticipantStatus.ACCEPTED)
+                .stream().map(participant -> ParticipantResponse.from(participant, user.getId()))
+                .sorted((o1, o2) -> {
+                    if (o1.user().isCurrentUser() == o2.user().isCurrentUser())
+                        return Boolean.compare(o2.isLeader(), o1.isLeader());
+                    return Boolean.compare(o2.user().isCurrentUser(), o1.user().isCurrentUser());
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void validateAcceptedParticipant(Long userId, Long postId) {
+        participantRepository.findByUserIdAndPostId(userId, postId)
+                .stream().filter(Participant::isAccepted).findFirst()
+                .orElseThrow(() -> new ParticipantException(ErrorCode.NOT_PARTICIPANT_USER));
     }
 }

@@ -44,6 +44,10 @@ public class Participant extends BaseTimeEntity {
         this.status = ParticipantStatus.ACCEPTED;
     }
 
+    public boolean isAccepted() {
+        return ParticipantStatus.ACCEPTED.equals(status);
+    }
+
     @Builder
     public Participant(boolean isLeader, ParticipantStatus status, User user, Post post) {
         this.isLeader = isLeader;
