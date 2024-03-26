@@ -110,8 +110,9 @@ public class ParticipantService {
     }
 
     private void validateAcceptedParticipant(Long userId, Long postId) {
-        participantRepository.findByUserIdAndPostId(userId, postId)
-                .stream().filter(Participant::isAccepted).findFirst()
-                .orElseThrow(() -> new ParticipantException(ErrorCode.NOT_PARTICIPANT_USER));
+        if (!participantRepository.existsByUserIdAndPostIdAndStatus(userId, postId, ParticipantStatus.ACCEPTED))
+            throw new ParticipantException(ErrorCode.NOT_PARTICIPANT_USER);
     }
+
+
 }

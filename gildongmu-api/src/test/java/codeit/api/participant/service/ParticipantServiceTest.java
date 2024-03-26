@@ -317,13 +317,8 @@ class ParticipantServiceTest {
     @DisplayName("참여자 조회 성공-참여중")
     void retrieveParticipantsTest_success_WhenRetrievingAcceptedUser() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
-                .willReturn(Optional.of(Participant.builder()
-                        .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
-                        .isLeader(false)
-                        .post(post)
-                        .build()));
+        given(participantRepository.existsByUserIdAndPostIdAndStatus(anyLong(), anyLong(), any()))
+                .willReturn(true);
         given(participantRepository.findByPostIdAndStatus(anyLong(), any()))
                 .willReturn(List.of(Participant.builder()
                                 .user(userB)
@@ -361,13 +356,8 @@ class ParticipantServiceTest {
     @DisplayName("참여자 조회 실패-NOT_PARTICIPANT_USER-참여중")
     void retrieveParticipantsTest_fail_NOT_PARTICIPANT_USER_WhenRetrievingAcceptedUser() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
-                .willReturn(Optional.of(Participant.builder()
-                        .user(userA)
-                        .status(ParticipantStatus.PENDING)
-                        .isLeader(false)
-                        .post(post)
-                        .build()));
+        given(participantRepository.existsByUserIdAndPostIdAndStatus(anyLong(), anyLong(), any()))
+                .willReturn(false);
         //when
         ParticipantException e = assertThrows(ParticipantException.class,
                 () -> participantService.retrieveParticipants(1L, userA, "ACCEPTED"));
