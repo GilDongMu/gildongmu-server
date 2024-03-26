@@ -1,7 +1,7 @@
 package codeit.domain.participant.entity;
 
 import codeit.domain.common.BaseTimeEntity;
-import codeit.domain.participant.constant.ParticipantStatus;
+import codeit.domain.participant.constant.Status;
 import codeit.domain.post.entity.Post;
 import codeit.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -26,7 +26,7 @@ public class Participant extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    private ParticipantStatus status;
+    private Status status;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -37,19 +37,19 @@ public class Participant extends BaseTimeEntity {
     private Post post;
 
     public void delete() {
-        this.status = ParticipantStatus.DELETED;
+        this.status = Status.DELETED;
     }
 
     public void accept() {
-        this.status = ParticipantStatus.ACCEPTED;
+        this.status = Status.ACCEPTED;
     }
 
     public boolean isAccepted() {
-        return ParticipantStatus.ACCEPTED.equals(status);
+        return Status.ACCEPTED.equals(status);
     }
 
     @Builder
-    public Participant(boolean isLeader, ParticipantStatus status, User user, Post post) {
+    public Participant(boolean isLeader, Status status, User user, Post post) {
         this.isLeader = isLeader;
         this.status = status;
         this.user = user;

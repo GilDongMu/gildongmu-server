@@ -4,7 +4,7 @@ import codeit.api.participant.dto.ParticipantResponse;
 import codeit.api.participant.service.ParticipantService;
 import codeit.api.security.UserPrincipal;
 import codeit.common.validator.EnumValue;
-import codeit.domain.participant.constant.ParticipantStatus;
+import codeit.domain.participant.constant.Status;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class ParticipantController {
     @ApiResponse
     @GetMapping("/participants")
     public ResponseEntity<List<ParticipantResponse>> retrieveParticipants(
-            @PathVariable Long postId, @RequestParam @EnumValue(enumClass = ParticipantStatus.class) String status,
+            @PathVariable Long postId, @RequestParam @EnumValue(enumClass = Status.class) String status,
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(participantService.retrieveParticipants(postId, principal.getUser(), status));
     }

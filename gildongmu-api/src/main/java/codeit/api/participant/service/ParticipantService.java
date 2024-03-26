@@ -4,7 +4,7 @@ import codeit.api.exception.ErrorCode;
 import codeit.api.participant.dto.ParticipantResponse;
 import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
-import codeit.domain.participant.constant.ParticipantStatus;
+import codeit.domain.participant.constant.Status;
 import codeit.domain.participant.entity.Participant;
 import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.entity.Post;
@@ -33,14 +33,14 @@ public class ParticipantService {
         participantRepository.save(Participant.builder()
                 .isLeader(false)
                 .post(post)
-                .status(ParticipantStatus.PENDING)
+                .status(Status.PENDING)
                 .user(user)
                 .build());
     }
 
     @Transactional
     public void exitParticipant(Long postId, User user) {
-        Participant participant = participantRepository.findByUserIdAndPostIdAndStatusIsNot(user.getId(), postId, ParticipantStatus.DELETED)
+        Participant participant = participantRepository.findByUserIdAndPostIdAndStatusIsNot(user.getId(), postId, Status.DELETED)
                 .orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
         participant.delete();
     }
@@ -49,7 +49,7 @@ public class ParticipantService {
         participantRepository.save(Participant.builder()
                 .isLeader(true)
                 .post(post)
-                .status(ParticipantStatus.ACCEPTED)
+                .status(Status.ACCEPTED)
                 .user(user)
                 .build());
     }
@@ -71,7 +71,7 @@ public class ParticipantService {
 
         Participant participantToBeAccepted = participantRepository.findById(participantId)
                 .stream().filter(participant -> Objects.equals(participant.getPost().getId(), postId)
-                        && Objects.equals(participant.getStatus(), ParticipantStatus.PENDING))
+                        && Objects.equals(participant.getStatus(), Status.PENDING))
                 .findFirst().orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
 
         participantToBeAccepted.accept();
@@ -84,7 +84,7 @@ public class ParticipantService {
     }
 
     public List<ParticipantResponse> retrieveParticipants(Long postId, User user, String status) {
-        if (ParticipantStatus.PENDING.name().equals(status))
+        if (Status.PENDING.name().equals(status))
             return retrievePendingParticipants(postId, user);
         return retrieveAcceptedParticipants(postId, user);
     }
@@ -92,14 +92,14 @@ public class ParticipantService {
 
     private List<ParticipantResponse> retrievePendingParticipants(Long postId, User user) {
         validateLeaderUser(user.getId(), postId);
-        return participantRepository.findByPostIdAndStatus(postId, ParticipantStatus.PENDING)
+        return participantRepository.findByPostIdAndStatus(postId, Status.PENDING)
                 .stream().map(ParticipantResponse::from)
                 .collect(Collectors.toList());
     }
 
     private List<ParticipantResponse> retrieveAcceptedParticipants(Long postId, User user) {
         validateAcceptedParticipant(user.getId(), postId);
-        return participantRepository.findByPostIdAndStatus(postId, ParticipantStatus.ACCEPTED)
+        return participantRepository.findByPostIdAndStatus(postId, Status.ACCEPTED)
                 .stream().map(participant -> ParticipantResponse.from(participant, user.getId()))
                 .sorted((o1, o2) -> {
                     if (o1.user().isCurrentUser() == o2.user().isCurrentUser())
@@ -110,7 +110,7 @@ public class ParticipantService {
     }
 
     private void validateAcceptedParticipant(Long userId, Long postId) {
-        if (!participantRepository.existsByUserIdAndPostIdAndStatus(userId, postId, ParticipantStatus.ACCEPTED))
+        if (!participantRepository.existsByUserIdAndPostIdAndStatus(userId, postId, Status.ACCEPTED))
             throw new ParticipantException(ErrorCode.NOT_PARTICIPANT_USER);
     }
 

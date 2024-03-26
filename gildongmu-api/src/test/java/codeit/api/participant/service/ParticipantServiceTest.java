@@ -4,7 +4,7 @@ import codeit.api.exception.ErrorCode;
 import codeit.api.participant.dto.ParticipantResponse;
 import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
-import codeit.domain.participant.constant.ParticipantStatus;
+import codeit.domain.participant.constant.Status;
 import codeit.domain.participant.entity.Participant;
 import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.entity.Post;
@@ -76,7 +76,7 @@ class ParticipantServiceTest {
         //then
         verify(participantRepository, times(1)).save(captor.capture());
         Participant saved = captor.getValue();
-        assertEquals(saved.getStatus(), ParticipantStatus.PENDING);
+        assertEquals(saved.getStatus(), Status.PENDING);
         assertFalse(saved.isLeader());
         assertEquals(post, saved.getPost());
         assertEquals(userA, saved.getUser());
@@ -113,7 +113,7 @@ class ParticipantServiceTest {
         //given
         Participant participant = Participant.builder()
                 .user(userA)
-                .status(ParticipantStatus.PENDING)
+                .status(Status.PENDING)
                 .isLeader(false)
                 .post(post)
                 .build();
@@ -122,7 +122,7 @@ class ParticipantServiceTest {
         //when
         participantService.exitParticipant(1L, userA);
         //then
-        assertEquals(ParticipantStatus.DELETED, participant.getStatus());
+        assertEquals(Status.DELETED, participant.getStatus());
     }
 
     @Test
@@ -145,13 +145,13 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(true)
                         .post(post)
                         .build()));
         Participant participantToBeDeleted = Participant.builder()
                 .user(userB)
-                .status(ParticipantStatus.PENDING)
+                .status(Status.PENDING)
                 .isLeader(false)
                 .post(post)
                 .build();
@@ -160,7 +160,7 @@ class ParticipantServiceTest {
         //when
         participantService.denyParticipant(1L, 1L, userA);
         //then
-        assertEquals(participantToBeDeleted.getStatus(), ParticipantStatus.DELETED);
+        assertEquals(participantToBeDeleted.getStatus(), Status.DELETED);
     }
 
     @Test
@@ -170,7 +170,7 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(false)
                         .post(post)
                         .build()));
@@ -188,7 +188,7 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(true)
                         .post(post)
                         .build()));
@@ -208,13 +208,13 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(true)
                         .post(post)
                         .build()));
         Participant participantToBeDeleted = Participant.builder()
                 .user(userB)
-                .status(ParticipantStatus.PENDING)
+                .status(Status.PENDING)
                 .isLeader(false)
                 .post(post)
                 .build();
@@ -223,7 +223,7 @@ class ParticipantServiceTest {
         //when
         participantService.acceptParticipant(1L, 1L, userA);
         //then
-        assertEquals(participantToBeDeleted.getStatus(), ParticipantStatus.ACCEPTED);
+        assertEquals(participantToBeDeleted.getStatus(), Status.ACCEPTED);
     }
 
     @Test
@@ -233,7 +233,7 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(false)
                         .post(post)
                         .build()));
@@ -251,7 +251,7 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(true)
                         .post(post)
                         .build()));
@@ -271,20 +271,20 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(true)
                         .post(post)
                         .build()));
         given(participantRepository.findByPostIdAndStatus(anyLong(), any()))
                 .willReturn(List.of(Participant.builder()
                                 .user(userB)
-                                .status(ParticipantStatus.PENDING)
+                                .status(Status.PENDING)
                                 .isLeader(false)
                                 .post(post)
                                 .build(),
                         Participant.builder()
                                 .user(userC)
-                                .status(ParticipantStatus.PENDING)
+                                .status(Status.PENDING)
                                 .isLeader(false)
                                 .post(post)
                                 .build()));
@@ -302,7 +302,7 @@ class ParticipantServiceTest {
         given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
                 .willReturn(Optional.of(Participant.builder()
                         .user(userA)
-                        .status(ParticipantStatus.ACCEPTED)
+                        .status(Status.ACCEPTED)
                         .isLeader(false)
                         .post(post)
                         .build()));
@@ -322,19 +322,19 @@ class ParticipantServiceTest {
         given(participantRepository.findByPostIdAndStatus(anyLong(), any()))
                 .willReturn(List.of(Participant.builder()
                                 .user(userB)
-                                .status(ParticipantStatus.ACCEPTED)
+                                .status(Status.ACCEPTED)
                                 .isLeader(false)
                                 .post(post)
                                 .build(),
                         Participant.builder()
                                 .user(userA)
-                                .status(ParticipantStatus.ACCEPTED)
+                                .status(Status.ACCEPTED)
                                 .isLeader(false)
                                 .post(post)
                                 .build(),
                         Participant.builder()
                                 .user(userC)
-                                .status(ParticipantStatus.ACCEPTED)
+                                .status(Status.ACCEPTED)
                                 .isLeader(true)
                                 .post(post)
                                 .build()));
