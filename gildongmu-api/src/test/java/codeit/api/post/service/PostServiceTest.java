@@ -1,6 +1,7 @@
 package codeit.api.post.service;
 
 import codeit.api.participant.service.ParticipantService;
+import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.response.PostListResponse;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.post.constant.MemberGender;
@@ -107,7 +108,7 @@ class PostServiceTest {
                                 .tagName("여행")
                         .build()));
         //when
-        Slice<PostListResponse.PostListItemResponse> responses = postService.retrieveMyPosts(userB, "LEADER", Pageable.ofSize(3));
+        Slice<PostItem> responses = postService.retrieveMyPosts(userB, "LEADER", Pageable.ofSize(3));
         //then
         assertEquals(responses.getContent().get(0).destination(), "일본, 도쿄");
         assertEquals(responses.getContent().get(0).status(), Status.OPEN.getCode());
@@ -150,7 +151,7 @@ class PostServiceTest {
                         .tagName("여행")
                         .build()));
         //when
-        Slice<PostListResponse.PostListItemResponse> responses = postService.retrieveMyPosts(userA, "NONE", Pageable.ofSize(3));
+        Slice<PostItem> responses = postService.retrieveMyPosts(userA, "NONE", Pageable.ofSize(3));
         //then
         assertEquals(responses.getContent().get(0).destination(), "일본, 도쿄");
         assertEquals(responses.getContent().get(0).status(), Status.OPEN.getCode());

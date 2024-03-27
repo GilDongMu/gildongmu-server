@@ -1,9 +1,9 @@
 package codeit.api.post.controller;
 
+import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.request.PostCreateRequest;
 import codeit.api.post.dto.request.PostUpdateRequest;
 import codeit.api.post.dto.response.PostListResponse;
-import codeit.api.post.dto.response.PostListResponse.PostListItemResponse;
 import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.service.PostService;
 import codeit.api.security.UserPrincipal;
@@ -115,7 +115,7 @@ public class PostController {
     @Operation(summary = "참여중 및 모집중 동행 글 리스트 조회")
     @ApiResponse
     @GetMapping("/me")
-    public ResponseEntity<Slice<PostListItemResponse>> retrieveMyPosts(
+    public ResponseEntity<Slice<PostItem>> retrieveMyPosts(
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             @RequestParam @EnumValue(enumClass = RetrievingType.class) String type,
             @AuthenticationPrincipal UserPrincipal principal) {
