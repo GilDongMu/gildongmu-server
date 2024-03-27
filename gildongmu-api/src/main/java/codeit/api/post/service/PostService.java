@@ -95,7 +95,7 @@ public class PostService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                post.getBookmarkCount()
+                (long) post.getBookmarks().size()
         );
     }
 

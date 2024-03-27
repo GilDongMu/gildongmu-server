@@ -76,9 +76,6 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long viewCount;
 
-    @ColumnDefault("0")
-    private Long bookmarkCount;
-
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     //@OrderBy("asc")
     private List<Comment> comments;
@@ -92,7 +89,7 @@ public class Post extends BaseTimeEntity {
     public Post(User user, String destination, String title, String content,
                 LocalDate startDate, LocalDate endDate, String thumbnail, List<Image> images,
                 MemberGender memberGender, Short participants, Status status,
-                Set<Bookmark> bookmarks, Long viewCount, Long bookmarkCount, List<Comment> comments) {
+                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments) {
         this.user = user;
         this.destination = destination;
         this.title = title;
@@ -106,7 +103,6 @@ public class Post extends BaseTimeEntity {
         this.status = status;
         this.bookmarks = bookmarks;
         this.viewCount = viewCount;
-        this.bookmarkCount = bookmarkCount;
         this.comments = comments;
     }
 

@@ -45,7 +45,7 @@ public record PostResponse(
                 ImageResponse.from(thumbnail),
                 ImageResponse.toList(post.getImages()),
                 (long) post.getComments().size(),
-                post.getBookmarkCount()
+                (long) post.getBookmarks().size()
         );
     }
 
