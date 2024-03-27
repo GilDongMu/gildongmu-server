@@ -30,6 +30,8 @@ public record PostResponse(
         Image thumbnail = findThumbnail(post.getThumbnail(), images);
         List<String> tagNames = findTagNames(tag);
 
+        long countOfBookmarks = post.getBookmarks() != null ? post.getBookmarks().size() : 0;
+
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
@@ -45,7 +47,7 @@ public record PostResponse(
                 ImageResponse.from(thumbnail),
                 ImageResponse.toList(post.getImages()),
                 (long) post.getComments().size(),
-                (long) post.getBookmarks().size()
+                countOfBookmarks
         );
     }
 

@@ -81,6 +81,8 @@ public class PostService {
         List<String> tagList = tags.stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
+        long countOfBookmarks =
+            post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
         return new PostItem(
                 post.getId(),
@@ -95,7 +97,7 @@ public class PostService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                (long) post.getBookmarks().size()
+                countOfBookmarks
         );
     }
 
