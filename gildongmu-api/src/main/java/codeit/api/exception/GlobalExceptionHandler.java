@@ -1,9 +1,11 @@
 package codeit.api.exception;
 
 import codeit.api.auth.exception.AuthException;
+import codeit.api.bookmark.exception.BookmarkException;
 import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.participant.exception.ParticipantException;
+import codeit.api.post.exception.PostException;
 import codeit.api.room.exception.RoomException;
 import codeit.api.user.exception.UserException;
 import jakarta.validation.ConstraintViolation;
@@ -68,6 +70,20 @@ public class GlobalExceptionHandler {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
                 .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
+    @ExceptionHandler(PostException.class)
+    public ResponseEntity<ExceptionResponse<String>> handlePostException(PostException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
+    @ExceptionHandler(BookmarkException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleBookmarkException(BookmarkException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

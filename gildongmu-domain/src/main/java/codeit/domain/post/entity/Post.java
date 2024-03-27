@@ -1,8 +1,7 @@
 package codeit.domain.post.entity;
 
-import codeit.domain.Bookmark.entity.Bookmark;
+import codeit.domain.bookmark.entity.Bookmark;
 import codeit.domain.Image.entity.Image;
-import codeit.domain.TagMap.Entity.TagMap;
 import codeit.domain.comment.entity.Comment;
 import codeit.domain.common.BaseTimeEntity;
 import codeit.domain.post.constant.MemberGender;
@@ -20,11 +19,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "posts")
+@DynamicInsert
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,9 +77,6 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long viewCount;
 
-    @ColumnDefault("0")
-    private Long bookmarkCount;
-
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     //@OrderBy("asc")
     private List<Comment> comments;
@@ -92,7 +90,7 @@ public class Post extends BaseTimeEntity {
     public Post(User user, String destination, String title, String content,
                 LocalDate startDate, LocalDate endDate, String thumbnail, List<Image> images,
                 MemberGender memberGender, Short participants, Status status,
-                Set<Bookmark> bookmarks, Long viewCount, Long bookmarkCount, List<Comment> comments) {
+                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments) {
         this.user = user;
         this.destination = destination;
         this.title = title;
@@ -106,7 +104,6 @@ public class Post extends BaseTimeEntity {
         this.status = status;
         this.bookmarks = bookmarks;
         this.viewCount = viewCount;
-        this.bookmarkCount = bookmarkCount;
         this.comments = comments;
     }
 

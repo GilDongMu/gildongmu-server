@@ -19,6 +19,9 @@ public enum ErrorCode {
     UNAUTHORIZED_PARTICIPANTS(HttpStatus.BAD_REQUEST, "소통 방 권한이 없는 유저입니다."),
     // post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 없습니다."),
+    // bookmark
+    ALREADY_BOOKMARK(HttpStatus.BAD_REQUEST, "이미 찜한 게시물 입니다."),
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "찜한 게시물이 아닙니다."),
     // participant
     ALREADY_REGISTERED_PARTICIPANT(HttpStatus.BAD_REQUEST, "이미 참여 신청한 유저입니다."),
     PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 참여자가 없습니다."),

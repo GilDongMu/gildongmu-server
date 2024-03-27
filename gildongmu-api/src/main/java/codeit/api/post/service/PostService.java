@@ -1,12 +1,12 @@
 package codeit.api.post.service;
 
 import codeit.api.participant.service.ParticipantService;
+import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.TripDate;
 import codeit.api.post.dto.request.ImageCreateRequest;
 import codeit.api.post.dto.request.PostCreateRequest;
 import codeit.api.post.dto.request.PostUpdateRequest;
 import codeit.api.post.dto.response.PostListResponse;
-import codeit.api.post.dto.response.PostListResponse.PostListItemResponse;
 import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.exception.PostException;
 import codeit.domain.Image.Repository.ImageRepository;
@@ -58,7 +58,7 @@ public class PostService {
             postPage = postRepository.findAll(pageable);
         }
 
-        List<PostListItemResponse> postListItems = postPage.getContent().stream()
+        List<PostItem> postListItems = postPage.getContent().stream()
                 .map(this::mapToPostListItem)
                 .collect(Collectors.toList());
 
@@ -76,13 +76,15 @@ public class PostService {
         );
     }
 
-    private PostListItemResponse mapToPostListItem(Post post) {
+    private PostItem mapToPostListItem(Post post) {
         List<Tag> tags = tagService.findTagListByPost(post);
         List<String> tagList = tags.stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
+        long countOfBookmarks =
+            post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
-        return new PostListItemResponse(
+        return new PostItem(
                 post.getId(),
                 post.getTitle(),
                 post.getUser().getNickname(),
@@ -95,7 +97,7 @@ public class PostService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                post.getBookmarkCount()
+                countOfBookmarks
         );
     }
 
@@ -236,7 +238,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public Slice<PostListItemResponse> retrieveMyPosts(User user, String type, Pageable pageable) {
+    public Slice<PostItem> retrieveMyPosts(User user, String type, Pageable pageable) {
         if (RetrievingType.LEADER.name().equals(type))
             return postRepository.findByUserOrderByStatusDesc(user, pageable)
                     .map(this::mapToPostListItem);
