@@ -1,8 +1,7 @@
 package codeit.domain.post.entity;
 
-import codeit.domain.Bookmark.entity.Bookmark;
+import codeit.domain.bookmark.entity.Bookmark;
 import codeit.domain.Image.entity.Image;
-import codeit.domain.TagMap.Entity.TagMap;
 import codeit.domain.comment.entity.Comment;
 import codeit.domain.common.BaseTimeEntity;
 import codeit.domain.post.constant.MemberGender;
