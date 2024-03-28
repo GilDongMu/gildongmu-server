@@ -19,17 +19,14 @@ public class Room extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime lastChatAt;
-
     private int headcount;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Builder
-    public Room(LocalDateTime lastChatAt, Integer headcount, Post post) {
-        this.lastChatAt = lastChatAt;
+    public Room(Integer headcount, Post post) {
         this.headcount = headcount;
         this.post = post;
     }
