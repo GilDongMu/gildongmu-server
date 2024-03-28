@@ -1,6 +1,7 @@
 package codeit.domain.room.entity;
 
 import codeit.domain.common.BaseTimeEntity;
+import codeit.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,13 +21,24 @@ public class Room extends BaseTimeEntity {
 
     private LocalDateTime lastChatAt;
 
-    private Integer headcount;
+    private int headcount;
 
-    // TODO: add post
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Builder
-    public Room(LocalDateTime lastChatAt, Integer headcount) {
+    public Room(LocalDateTime lastChatAt, Integer headcount, Post post) {
         this.lastChatAt = lastChatAt;
         this.headcount = headcount;
+        this.post = post;
+    }
+
+    public void plusHeadCount() {
+        headcount++;
+    }
+
+    public void minusHeadCount() {
+        headcount--;
     }
 }

@@ -9,6 +9,8 @@ import codeit.domain.participant.entity.Participant;
 import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.entity.Post;
 import codeit.domain.post.repository.PostRepository;
+import codeit.domain.room.entity.Room;
+import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static codeit.domain.post.constant.Status.CLOSED;
+import static codeit.domain.post.constant.Status.OPEN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -35,6 +39,8 @@ class ParticipantServiceTest {
     private ParticipantRepository participantRepository;
     @Mock
     private PostRepository postRepository;
+    @Mock
+    private RoomRepository roomRepository;
     @InjectMocks
     private ParticipantService participantService;
 
@@ -54,6 +60,7 @@ class ParticipantServiceTest {
             .role(Role.ROLE_USER)
             .password("encoded")
             .build();
+
 
     @BeforeAll
     static void init() {
@@ -113,16 +120,22 @@ class ParticipantServiceTest {
         //given
         Participant participant = Participant.builder()
                 .user(userA)
-                .status(Status.PENDING)
+                .status(Status.ACCEPTED)
                 .isLeader(false)
                 .post(post)
                 .build();
+        Room room = Room.builder()
+                .headcount(2)
+                .build();
         given(participantRepository.findByUserIdAndPostIdAndStatusIsNot(anyLong(), anyLong(), any()))
                 .willReturn(Optional.of(participant));
+        given(roomRepository.findByPostId(anyLong()))
+                .willReturn(Optional.of(room));
         //when
         participantService.exitParticipant(1L, userA);
         //then
         assertEquals(Status.DELETED, participant.getStatus());
+        assertEquals(room.getHeadcount(), 1);
     }
 
     @Test
@@ -205,13 +218,12 @@ class ParticipantServiceTest {
     @DisplayName("신청자 수락 성공")
     void acceptParticipantTest_success() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
-                .willReturn(Optional.of(Participant.builder()
-                        .user(userA)
-                        .status(Status.ACCEPTED)
-                        .isLeader(true)
-                        .post(post)
-                        .build()));
+        Post postA = Post.builder()
+                .user(userA)
+                .status(OPEN)
+                .participants((short) 2)
+                .build();
+        given(postRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.of(postA));
         Participant participantToBeDeleted = Participant.builder()
                 .user(userB)
                 .status(Status.PENDING)
@@ -220,41 +232,46 @@ class ParticipantServiceTest {
                 .build();
         given(participantRepository.findById(anyLong()))
                 .willReturn(Optional.of(participantToBeDeleted));
+        Room room = Room.builder()
+                .headcount(1)
+                .build();
+        given(roomRepository.findByPost(any()))
+                .willReturn(Optional.of(room));
         //when
         participantService.acceptParticipant(1L, 1L, userA);
         //then
         assertEquals(participantToBeDeleted.getStatus(), Status.ACCEPTED);
+        assertEquals(room.getHeadcount(), 2);
+        assertEquals(postA.getStatus(), CLOSED);
     }
 
     @Test
-    @DisplayName("신청자 수락 실패-NOT_LEADER_USER")
-    void acceptParticipantTest_fail_NOT_LEADER_USER() {
+    @DisplayName("신청자 수락 실패-POST_NOT_FOUND")
+    void acceptParticipantTest_fail_POST_NOT_FOUND() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
-                .willReturn(Optional.of(Participant.builder()
-                        .user(userA)
-                        .status(Status.ACCEPTED)
-                        .isLeader(false)
-                        .post(post)
-                        .build()));
+        Post postA = Post.builder()
+                .user(userB)
+                .status(OPEN)
+                .participants((short) 2)
+                .build();
+        given(postRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.of(postA));
         //when
-        ParticipantException e = assertThrows(ParticipantException.class,
+        PostException e = assertThrows(PostException.class,
                 () -> participantService.acceptParticipant(1L, 1L, userA));
         //then
-        assertEquals(ErrorCode.NOT_LEADER_USER, e.getErrorCode());
+        assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
     }
 
     @Test
     @DisplayName("신청자 수락 실패-PARTICIPANT_NOT_FOUND")
     void denyParticipantTest_fail_PARTICIPANT_NOT_FOUND() {
         //given
-        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
-                .willReturn(Optional.of(Participant.builder()
-                        .user(userA)
-                        .status(Status.ACCEPTED)
-                        .isLeader(true)
-                        .post(post)
-                        .build()));
+        Post postA = Post.builder()
+                .user(userA)
+                .status(OPEN)
+                .participants((short) 2)
+                .build();
+        given(postRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.of(postA));
         given(participantRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
         //when
