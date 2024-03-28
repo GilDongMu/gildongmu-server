@@ -44,7 +44,6 @@ class ChatServiceTest {
             .build();
 
     Room room = Room.builder()
-            .lastChatAt(LocalDateTime.MIN)
             .headcount(1)
             .build();
 
