@@ -51,6 +51,7 @@ class RoomControllerTest {
     @MockBean
     private JwtTokenManager jwtTokenManager;
 
+
     @Test
     @WithMockCustomUser(role = Role.ROLE_USER)
     @DisplayName("채팅 리스트 조회 성공")
@@ -58,6 +59,32 @@ class RoomControllerTest {
         //given
         //when
         mockMvc.perform(get("/rooms/{roomId}/chats", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @WithMockCustomUser(role = Role.ROLE_USER)
+    @DisplayName("내가 속한 소통공간 조회")
+    void retrieveRoomsTest_success() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get("/rooms")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @WithMockCustomUser(role = Role.ROLE_USER)
+    @DisplayName("소통공간 정보 조회")
+    void retrieveRoomTest_success() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get("/rooms/{roomId}",1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
