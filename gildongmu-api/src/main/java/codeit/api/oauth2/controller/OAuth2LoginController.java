@@ -53,7 +53,6 @@ public class OAuth2LoginController {
         TokenResponse response = oAuth2LoginService.issueToken(oAuth2LoginUser);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, response.generateCookie())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.accessToken())
-                .build();
+                .body(response);
     }
 }
