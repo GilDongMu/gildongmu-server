@@ -1,5 +1,6 @@
 package codeit.domain.post.repository;
 
+import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
 import codeit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     @Query("select p from Post p left join Participant u on p.id = u.post.id where u.user.id = ?1 and u.status != 'DELETED' and u.isLeader = false order by p.status desc")
     Slice<Post> findByParticipantUserOrderByStatusDesc(Long userId, Pageable pageable);
 
+    Optional<Post> findByIdAndStatus(Long postId, Status status);
 }

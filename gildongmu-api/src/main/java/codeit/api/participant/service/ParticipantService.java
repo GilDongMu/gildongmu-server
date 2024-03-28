@@ -9,6 +9,8 @@ import codeit.domain.participant.entity.Participant;
 import codeit.domain.participant.repository.ParticipantRepository;
 import codeit.domain.post.entity.Post;
 import codeit.domain.post.repository.PostRepository;
+import codeit.domain.room.entity.Room;
+import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static codeit.domain.post.constant.Status.*;
+import static codeit.domain.post.constant.Status.OPEN;
+
 @Service
 @RequiredArgsConstructor
 public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final PostRepository postRepository;
+    private final RoomRepository roomRepository;
 
     public void applyForParticipant(Long postId, User user) {
         Post post = postRepository.findById(postId)
@@ -42,7 +48,12 @@ public class ParticipantService {
     public void exitParticipant(Long postId, User user) {
         Participant participant = participantRepository.findByUserIdAndPostIdAndStatusIsNot(user.getId(), postId, Status.DELETED)
                 .orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
+        Status participantBeforeExit = participant.getStatus();
         participant.delete();
+        roomRepository.findByPostId(postId)
+                .ifPresent(room -> {
+                    if(Status.ACCEPTED.equals(participantBeforeExit))
+                        room.minusHeadCount();});
     }
 
     public void saveLeader(Post post, User user) {
@@ -67,15 +78,31 @@ public class ParticipantService {
 
     @Transactional
     public void acceptParticipant(Long postId, Long participantId, User user) {
-        validateLeaderUser(user.getId(), postId);
+        Post post = postRepository.findByIdAndStatus(postId, OPEN)
+                .filter(p -> Objects.equals(p.getUser().getId(), user.getId())).stream().findFirst()
+                .orElseThrow(() -> new PostException(ErrorCode.POST_NOT_FOUND));
 
         Participant participantToBeAccepted = participantRepository.findById(participantId)
                 .stream().filter(participant -> Objects.equals(participant.getPost().getId(), postId)
                         && Objects.equals(participant.getStatus(), Status.PENDING))
                 .findFirst().orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
-
         participantToBeAccepted.accept();
+
+        handlingParticipantAcceptedEvent(post);
     }
+
+    // TODO: extract to event listener
+    public void handlingParticipantAcceptedEvent(Post post) {
+        Room room = roomRepository.findByPost(post)
+                .orElse(roomRepository.save(Room.builder()
+                                .post(post)
+                                .headcount(2)
+                                .build()));
+        room.plusHeadCount();
+        if(room.getHeadcount() == post.getParticipants())
+            post.updateStatus(CLOSED);
+    }
+
 
     private void validateLeaderUser(Long userId, Long postId) {
         participantRepository.findByUserIdAndPostId(userId, postId)

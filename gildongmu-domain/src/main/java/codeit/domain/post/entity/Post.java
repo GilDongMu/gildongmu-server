@@ -1,6 +1,6 @@
 package codeit.domain.post.entity;
 
-import codeit.domain.bookmark.entity.Bookmark;
+import codeit.domain.Bookmark.entity.Bookmark;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.comment.entity.Comment;
 import codeit.domain.common.BaseTimeEntity;
