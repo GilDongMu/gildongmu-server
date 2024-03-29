@@ -40,9 +40,7 @@ public class OAuth2LoginController {
                                           @Valid @RequestPart OAuth2SignUpRequest request,
                                           @Valid @RequestPart(required = false) MultipartFile image) {
         oAuth2LoginService.register(oAuth2LoginUser.getUser(), request, image);
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-                .header(HttpHeaders.LOCATION, "/oauth2/login")
-                .build();
+        return ResponseEntity.ok().build();
     }
 
 
