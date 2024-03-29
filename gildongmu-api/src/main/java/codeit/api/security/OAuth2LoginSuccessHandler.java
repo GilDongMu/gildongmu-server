@@ -23,7 +23,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         if (oAuth2LoginUser.hasAuthority(Role.ROLE_GUEST)) {
             response.sendRedirect("/oauth2/signup");
-        } else if (oAuth2LoginUser.hasAuthority(Role.ROLE_GUEST)) {
+        } else if (oAuth2LoginUser.hasAuthority(Role.ROLE_USER)) {
             response.sendRedirect("/oauth2/login");
         }
 

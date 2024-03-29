@@ -1,14 +1,14 @@
 package codeit.api.oauth2.dto.response;
 
 import codeit.common.security.CookieUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import net.minidev.json.annotate.JsonIgnore;
 
 
 @Builder
 public record TokenResponse(
         String accessToken,
-        @JsonIgnore String refreshToken
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) String refreshToken
 ) {
 
     public static TokenResponse of(String accessToken, String refreshToken) {
