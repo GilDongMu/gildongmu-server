@@ -11,7 +11,6 @@ import codeit.api.post.dto.response.PostListResponse;
 import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.exception.PostException;
-import codeit.common.client.S3Client;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.post.constant.MemberGender;
@@ -24,7 +23,6 @@ import codeit.domain.tag.entity.Tag;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +35,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.web.multipart.MultipartFile;
 
 import static codeit.api.exception.ErrorCode.POST_NOT_FOUND;
 import static codeit.api.exception.ErrorCode.USER_NOT_FOUND;
@@ -50,11 +47,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
-    private final RoomRepository roomRepository;
     private final TagService tagService;
-    private final ImageService imageService;
     private final ParticipantService participantService;
-    private final S3Client s3Client;
+    private final RoomRepository roomRepository;
 
     public PostListResponse findPosts(String postFilter, Pageable pageable) {
         Specification<Post> specification = getFilter(postFilter);
@@ -161,7 +156,7 @@ public class PostService {
         return PostResponse.from(post, tag, post.getImages());
     }
 
-    public void createPost(PostCreateRequest postRequest, List<MultipartFile> images, String email) {
+    public void createPost(PostCreateRequest postRequest, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(USER_NOT_FOUND));
 
@@ -177,17 +172,19 @@ public class PostService {
                 .status(Status.OPEN)
                 .build();
 
-        List<Image> updatedImages = null;
-        if (images != null) {
-            List<String> imageUrls = new ArrayList<>();
-            for (MultipartFile image : images) {
-                String imageUrl = s3Client.upload(image);
-                imageUrls.add(imageUrl);
-            }
+        //TODO => ImageService 분리
+        List<ImageCreateRequest> images = postRequest.images();
 
-            updatedImages = imageService.saveImages(imageUrls, post);
-            String thumbnail = updatedImages.get(0).getUrl();
-            post.updateThumbnail(thumbnail);
+        for (ImageCreateRequest imageCreateRequest : images) {
+            Image image = Image.builder()
+                    .url(imageCreateRequest.url())
+                    .post(post)
+                    .build();
+
+            if (imageCreateRequest.thumbnail())
+                post.add(image.getUrl());
+
+            imageRepository.save(image);
         }
 
         postRepository.save(post);
@@ -195,9 +192,9 @@ public class PostService {
         participantService.saveLeader(post, user);
     }
 
-    public PostResponse updatePost(Long postId, List<MultipartFile> images, PostUpdateRequest postUpdateRequest) {
+    public PostResponse updatePost(Long postId, PostUpdateRequest postUpdateRequest) {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         post.updateTitle(postUpdateRequest.title());
         post.updateContent(postUpdateRequest.content());
@@ -207,24 +204,28 @@ public class PostService {
         post.updateGender(MemberGender.valueOf(postUpdateRequest.gender()));
         post.updateParticipants(postUpdateRequest.numberOfPeople());
 
-        List<Image> existImages = imageService.findAllByPostId(postId);
-        imageService.deleteAllImagesFromS3(existImages);
-
-        List<Long> ids = imageService.findAllId(postId);
-        imageService.deleteAllImagesFromDB(ids);
-
-
-        List<Image> updatedImages = null;
-        if (images != null) {
-            List<String> imageUrls = new ArrayList<>();
-            for (MultipartFile image : images) {
-                String imageUrl = s3Client.upload(image);
-                imageUrls.add(imageUrl);
-            }
-            updatedImages = imageService.saveImages(imageUrls, post);
-            String thumbnail = updatedImages.get(0).getUrl();
-            post.updateThumbnail(thumbnail);
+        //TODO ==> ImageService 분리
+        List<Image> existImages = post.getImages();
+        for (Image existImage : existImages) {
+            imageRepository.delete(existImage);
         }
+        existImages.clear();
+
+        List<ImageCreateRequest> images = postUpdateRequest.images();
+        List<Image> updatedImages = new ArrayList<>();
+        for (ImageCreateRequest imageCreateRequest : images) {
+            Image image = Image.builder()
+                    .url(imageCreateRequest.url())
+                    .post(post)
+                    .build();
+            updatedImages.add(image);
+            imageRepository.save(image);
+
+            if (imageCreateRequest.thumbnail())
+                post.updateThumbnail(image.getUrl());
+        }
+        post.updateImages(updatedImages);
+
 
         tagService.deleteTag(post);
         tagService.saveTag(post, postUpdateRequest.tag());
@@ -236,9 +237,6 @@ public class PostService {
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
-
-        List<Image> images = imageService.findAllByPostId(id);
-        imageService.deleteAllImagesFromS3(images);
 
         tagService.deleteTag(post);
         postRepository.delete(post);
