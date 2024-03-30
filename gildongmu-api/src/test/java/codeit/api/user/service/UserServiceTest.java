@@ -122,12 +122,28 @@ class UserServiceTest {
     void checkMyPasswordTest_success() {
         //given
         PasswordCheckRequest request = new PasswordCheckRequest("my-password");
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(userA));
         given(passwordEncoder.matches(anyString(), anyString()))
                 .willReturn(true);
         //when
-        PasswordCheckResponse response = userService.checkMyPassword(request, userA);
+        PasswordCheckResponse response = userService.checkMyPassword(request, user);
         //then
         assertTrue(response.isCorrect());
+    }
+
+    @Test
+    @DisplayName("비밀번호 체크 실패_USER_NOT_FOUND")
+    void checkMyPasswordTest_fail_USER_NOT_FOUND() {
+        //given
+        PasswordCheckRequest request = new PasswordCheckRequest("my-password");
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+        //when
+        UserException e = assertThrows(UserException.class,
+                () -> userService.checkMyPassword(request, user));
+        //then
+        assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
 
