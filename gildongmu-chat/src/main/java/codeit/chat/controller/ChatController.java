@@ -2,12 +2,12 @@ package codeit.chat.controller;
 
 import codeit.chat.controller.dto.request.ChatImageRequest;
 import codeit.chat.controller.dto.request.ChatMessageRequest;
-import codeit.chat.controller.dto.response.ChatResponse;
 import codeit.chat.security.UserPrincipal;
 import codeit.chat.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class ChatController {
     private final ChatService chatService;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @MessageMapping("/rooms/{roomId}/message")
-    @SendTo("/rooms/{roomId}")
-    public ChatResponse message(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest message, UserPrincipal principal) {
-        return chatService.message(roomId, message, principal.getUser());
+    public void message(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest message, UserPrincipal principal) {
+        kafkaTemplate.send("chat", chatService.message(roomId, message, principal.getUser()));
     }
 
     @MessageMapping("/rooms/{roomId}/image")

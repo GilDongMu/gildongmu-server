@@ -1,12 +1,14 @@
 package codeit.api.room.service;
 
 import codeit.api.exception.ErrorCode;
+import codeit.api.room.dto.response.ChatGroupByDateResponse;
 import codeit.api.room.dto.response.ChatResponse;
 import codeit.api.room.dto.response.RoomInfoResponse;
 import codeit.api.room.dto.response.RoomResponse;
 import codeit.api.room.exception.RoomException;
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.chat.entity.Chat;
+import codeit.domain.chat.entity.ChatUser;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.post.entity.Post;
 import codeit.domain.room.entity.Room;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoomServiceTest {
@@ -46,14 +50,14 @@ class RoomServiceTest {
     @InjectMocks
     private RoomService roomService;
 
-    User userA = User.builder()
+    static User userA = User.builder()
             .email("userA@google.com")
             .nickname("a")
             .role(Role.ROLE_USER)
             .password("encoded")
             .build();
 
-    User userB = User.builder()
+    static User userB = User.builder()
             .email("userB@google.com")
             .nickname("b")
             .role(Role.ROLE_USER)
@@ -70,6 +74,8 @@ class RoomServiceTest {
             .build();
 
     static User userC;
+    static Chat chatA;
+    static Chat chatB;
 
 
     @BeforeAll
@@ -77,6 +83,18 @@ class RoomServiceTest {
         userC = mock(User.class);
         given(userC.getId()).willReturn(1L);
         given(userC.getNickname()).willReturn("a");
+        chatA = getMockChat(1L, "안녕하세요", ChatType.MESSAGE, userA, LocalDateTime.MAX);
+        chatB = getMockChat(1L, "/image-path", ChatType.IMAGE, userB, LocalDateTime.MIN);
+    }
+
+    static private Chat getMockChat(Long roomId, String content, ChatType type, User user, LocalDateTime createdAt) {
+        Chat chat = mock(Chat.class);
+        given(chat.getRoomId()).willReturn(roomId);
+        given(chat.getType()).willReturn(type);
+        given(chat.getContent()).willReturn(content);
+        given(chat.getSender()).willReturn(ChatUser.from(user));
+        given(chat.getCreatedAt()).willReturn(createdAt);
+        return chat;
     }
 
     @Test
@@ -90,7 +108,7 @@ class RoomServiceTest {
                                 .post(postA)
                                 .build())));
         //when
-        Slice<RoomResponse> responses = roomService.retrieveRooms(userC, PageRequest.of(1,1));
+        Slice<RoomResponse> responses = roomService.retrieveRooms(userC, PageRequest.of(1, 1));
         //then
         RoomResponse response = responses.getContent().get(0);
         assertEquals(2, response.headCount());
@@ -98,53 +116,41 @@ class RoomServiceTest {
         assertEquals("/POST/thubmbnail", response.thumbnail());
     }
 
+
     @Test
     @DisplayName("채팅방 채팅 조회 성공")
     void retrieveChatsTest_success() {
         //given
-        given(roomRepository.findById(anyLong()))
-                .willReturn(Optional.of(Room.builder()
-                        .headcount(1)
-                        .build()));
+        given(roomRepository.existsParticipatedRoomById(anyLong(), anyLong()))
+                .willReturn(true);
 
         given(chatMongoRepository.findByRoomId(anyLong(), any()))
                 .willReturn(new SliceImpl<>(
-                        List.of(Chat.builder()
-                                        .roomId(1L)
-                                        .content("안녕하세요")
-                                        .type(ChatType.MESSAGE)
-                                        .user(userA)
-                                        .build(),
-                                Chat.builder()
-                                        .roomId(1L)
-                                        .content("/image-path")
-                                        .type(ChatType.IMAGE)
-                                        .user(userB)
-                                        .build())));
+                        List.of(chatA,
+                                chatB)));
 
         Pageable requestdPageable = Pageable.ofSize(10);
         //when
-        Slice<ChatResponse> responses = roomService.retrieveChats(userA, 1L, requestdPageable);
+        Slice<ChatGroupByDateResponse> responses = roomService.retrieveChats(userC, 1L, requestdPageable);
         //then
-        List<ChatResponse> chats = responses.getContent();
-        assertEquals(chats.size(), 2);
+        List<ChatGroupByDateResponse> chatGroupByDateResponses = responses.getContent();
+        List<ChatResponse> chats = chatGroupByDateResponses.get(0).chats();
+        assertEquals(chatGroupByDateResponses.size(), 2);
         assertEquals(chats.get(0).content(), "안녕하세요");
         assertTrue(chats.get(0).isMessageType());
         assertEquals(chats.get(0).sender().nickname(), "a");
-        assertEquals(chats.get(1).content(), "/image-path");
-        assertFalse(chats.get(1).isMessageType());
-        assertEquals(chats.get(1).sender().nickname(), "b");
     }
 
     @Test
     @DisplayName("채팅방 채팅 조회 실패-ROOM_NOT_FOUND")
     void retrieveChatsTest_fail_ROOM_NOT_FOUND() {
         //given
-        given(roomRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(roomRepository.existsParticipatedRoomById(anyLong(), anyLong()))
+                .willReturn(false);
         Pageable requestdPageable = Pageable.ofSize(10);
         //when
         RoomException e = assertThrows(RoomException.class,
-                () -> roomService.retrieveChats(userA, 1L, requestdPageable));
+                () -> roomService.retrieveChats(userC, 1L, requestdPageable));
         //then
         assertEquals(ErrorCode.ROOM_NOT_FOUND, e.getErrorCode());
     }

@@ -1,19 +1,25 @@
 package codeit.api.room.service;
 
 import codeit.api.exception.ErrorCode;
+import codeit.api.room.dto.response.ChatGroupByDateResponse;
 import codeit.api.room.dto.response.ChatResponse;
 import codeit.api.room.dto.response.RoomInfoResponse;
 import codeit.api.room.dto.response.RoomResponse;
 import codeit.api.room.exception.RoomException;
+import codeit.domain.chat.entity.Chat;
 import codeit.domain.chat.repository.ChatMongoRepository;
-import codeit.domain.room.entity.Room;
 import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -32,17 +38,35 @@ public class RoomService {
                 .map(RoomResponse::from);
     }
 
-    public Slice<ChatResponse> retrieveChats(User user, Long roomId, Pageable pageable) {
+    public Slice<ChatGroupByDateResponse> retrieveChats(User user, Long roomId, Pageable pageable) {
         validateRetrieveChats(roomId, user.getId());
 
-        return chatMongoRepository.findByRoomId(roomId, pageable)
-                .map(chat -> ChatResponse.from(chat, user.getId()));
+        return getGroupingChatSlices(chatMongoRepository.findByRoomId(roomId, pageable), user.getId());
     }
 
+    public Slice<ChatGroupByDateResponse> getGroupingChatSlices(Slice<Chat> chatSlice, Long userId) {
+        if (chatSlice.getContent().isEmpty())
+            return new SliceImpl<>(new ArrayList<>(), chatSlice.getPageable(), chatSlice.hasNext());
+        List<ChatGroupByDateResponse> content = new ArrayList<>();
+        List<ChatResponse> sameDayChats = new ArrayList<>();
+        LocalDate prevDate = chatSlice.getContent().get(0).getCreatedAt().toLocalDate();
+        for (Chat chat : chatSlice.getContent()) {
+            LocalDate curDate = chat.getCreatedAt().toLocalDate();
+            if (!prevDate.equals(curDate)) {
+                content.add(ChatGroupByDateResponse.of(prevDate, sameDayChats));
+                sameDayChats = new ArrayList<>();
+                prevDate = curDate;
+            }
+            sameDayChats.add(ChatResponse.from(chat, userId));
+        }
+        content.add(ChatGroupByDateResponse.of(prevDate, sameDayChats));
+        return new SliceImpl<>(content, chatSlice.getPageable(), chatSlice.hasNext());
+    }
+
+
     private void validateRetrieveChats(Long roomId, Long userId) {
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RoomException(ErrorCode.ROOM_NOT_FOUND));
-        //TODO: validate that user is post's participant
+        if (!roomRepository.existsParticipatedRoomById(roomId, userId))
+            throw new RoomException(ErrorCode.ROOM_NOT_FOUND);
     }
 
 }

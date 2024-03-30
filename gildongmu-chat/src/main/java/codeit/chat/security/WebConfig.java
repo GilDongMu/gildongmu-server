@@ -1,4 +1,4 @@
-package codeit.chat.config;
+package codeit.chat.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

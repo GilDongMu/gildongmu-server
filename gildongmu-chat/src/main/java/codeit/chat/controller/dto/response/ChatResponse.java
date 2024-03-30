@@ -1,7 +1,7 @@
 package codeit.chat.controller.dto.response;
 
+import codeit.chat.handler.dto.transfer.ChatDto;
 import codeit.domain.chat.constant.ChatType;
-import codeit.domain.chat.entity.Chat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,12 +15,12 @@ public class ChatResponse implements Serializable {
     private String content;
     private ChatType type;
 
-    public static ChatResponse from(Chat chat) {
+    public static ChatResponse from(ChatDto dto) {
         return ChatResponse.builder()
-                .id(chat.getId())
-                .content(chat.getContent())
-                .type(chat.getType())
-                .sender(ChatUserResponse.from(chat.getSender()))
+                .id(dto.getChatId())
+                .content(dto.getContent())
+                .type(dto.getType())
+                .sender(ChatUserResponse.from(dto.getSender()))
                 .build();
     }
 }
