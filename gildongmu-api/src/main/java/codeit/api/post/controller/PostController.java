@@ -3,12 +3,13 @@ package codeit.api.post.controller;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.request.PostCreateRequest;
 import codeit.api.post.dto.request.PostUpdateRequest;
+import codeit.api.post.dto.request.RetrievingType;
 import codeit.api.post.dto.response.PostListResponse;
 import codeit.api.post.dto.response.PostResponse;
+import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.service.PostService;
 import codeit.api.security.UserPrincipal;
 import codeit.common.validator.EnumValue;
-import codeit.api.post.dto.request.RetrievingType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -120,6 +121,14 @@ public class PostController {
             @RequestParam @EnumValue(enumClass = RetrievingType.class) String type,
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(postService.retrieveMyPosts(principal.getUser(), type, pageable));
+    }
+
+    @Operation(summary = "요약 글 조회")
+    @ApiResponse
+    @GetMapping("/{postId}/summary")
+    public ResponseEntity<PostSummaryResponse> retrievePostSummary(@PathVariable Long postId,
+                                                                   @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(postService.retrievePostSummary(principal.getUser(), postId));
     }
 
 }
