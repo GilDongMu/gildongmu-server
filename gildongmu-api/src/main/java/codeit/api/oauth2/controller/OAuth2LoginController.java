@@ -36,21 +36,10 @@ public class OAuth2LoginController {
     @ApiResponse
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(encoding = @Encoding(name = "request", contentType = "application/json")))
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity<Void> register(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser,
-                                          @Valid @RequestPart OAuth2SignUpRequest request,
-                                          @Valid @RequestPart(required = false) MultipartFile image) {
-        oAuth2LoginService.register(oAuth2LoginUser, request, image);
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-                .header(HttpHeaders.LOCATION, "/oauth2/login")
-                .build();
-    }
-
-
-    @Operation(summary = "OAuth2 로그인 유저 토큰 발급")
-    @ApiResponse
-    @GetMapping("/login")
-    private ResponseEntity<TokenResponse> issueToken(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser) {
-        TokenResponse response = oAuth2LoginService.issueToken(oAuth2LoginUser);
+    private ResponseEntity<TokenResponse> register(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser,
+                                                   @Valid @RequestPart OAuth2SignUpRequest request,
+                                                   @Valid @RequestPart(required = false) MultipartFile image) {
+        TokenResponse response = oAuth2LoginService.register(oAuth2LoginUser, request, image);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, response.generateCookie())
                 .body(response);
