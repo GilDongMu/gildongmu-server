@@ -29,4 +29,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "left join Participant pa on p.id = pa.post.id " +
             "where r.id = ?1 and pa.user.id = ?2 ")
     Optional<Room> findParticipatedRoomById(Long id, Long userId);
+
+    @Query("select case when exists " +
+            "(select 1 from Room r left join r.post p " +
+            "left join Participant pa on p.id = pa.post.id " +
+            "where r.id = ?1 and pa.user.id = ?2) " +
+            "then true else false end ")
+    boolean existsParticipatedRoomById(Long id, Long userId);
 }
