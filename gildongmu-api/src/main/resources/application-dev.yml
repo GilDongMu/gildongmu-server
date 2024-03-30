@@ -39,5 +39,9 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  kafka:
+    bootstrap-servers: ${KAFKA_URI}
+    consumer:
+      group-id: group-chat
 jwt:
   secret: ${JWT_SECRET}

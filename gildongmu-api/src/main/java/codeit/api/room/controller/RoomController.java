@@ -1,5 +1,6 @@
 package codeit.api.room.controller;
 
+import codeit.api.room.dto.response.ChatGroupByDateResponse;
 import codeit.api.room.dto.response.ChatResponse;
 import codeit.api.room.dto.response.RoomInfoResponse;
 import codeit.api.room.dto.response.RoomResponse;
@@ -29,7 +30,7 @@ public class RoomController {
     @Operation(summary = "소통공간 채팅 리스트 조회")
     @ApiResponse
     @GetMapping("/{roomId}/chats")
-    private ResponseEntity<Slice<ChatResponse>> retrieveChats(
+    private ResponseEntity<Slice<ChatGroupByDateResponse>> retrieveChats(
             @PathVariable Long roomId, @PageableDefault(page = 0, size = 10, sort = "created_at", direction = DESC) Pageable pageable, @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(roomService.retrieveChats(principal.getUser(), roomId, pageable));
     }

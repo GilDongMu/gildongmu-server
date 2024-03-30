@@ -5,6 +5,7 @@ import codeit.domain.post.entity.Post;
 import codeit.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
+    @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
     Optional<Post> findById(Long postId);
 
     Slice<Post> findByUserOrderByStatusDesc(User user, Pageable pageable);

@@ -6,16 +6,19 @@ import codeit.api.post.dto.TripDate;
 import codeit.api.post.dto.request.ImageCreateRequest;
 import codeit.api.post.dto.request.PostCreateRequest;
 import codeit.api.post.dto.request.PostUpdateRequest;
+import codeit.api.post.dto.request.RetrievingType;
 import codeit.api.post.dto.response.PostListResponse;
 import codeit.api.post.dto.response.PostResponse;
+import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.exception.PostException;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
-import codeit.api.post.dto.request.RetrievingType;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
 import codeit.domain.post.repository.PostRepository;
+import codeit.domain.room.entity.Room;
+import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.tag.entity.Tag;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
@@ -46,6 +49,7 @@ public class PostService {
     private final ImageRepository imageRepository;
     private final TagService tagService;
     private final ParticipantService participantService;
+    private final RoomRepository roomRepository;
 
     public PostListResponse findPosts(String postFilter, Pageable pageable) {
         Specification<Post> specification = getFilter(postFilter);
@@ -82,7 +86,7 @@ public class PostService {
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
         long countOfBookmarks =
-            post.getBookmarks() != null ? post.getBookmarks().size() : 0;
+                post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
         return new PostItem(
                 post.getId(),
@@ -244,6 +248,15 @@ public class PostService {
                     .map(this::mapToPostListItem);
         return postRepository.findByParticipantUserOrderByStatusDesc(user.getId(), pageable)
                 .map(this::mapToPostListItem);
+    }
+
+    public PostSummaryResponse retrievePostSummary(User user, Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+        int numberOfAccepted = roomRepository.findByPost(post)
+                .map(Room::getHeadcount)
+                .orElseGet(() -> 1);
+        return PostSummaryResponse.from(post, numberOfAccepted, user.getId());
     }
 
 }

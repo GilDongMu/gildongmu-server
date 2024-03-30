@@ -29,11 +29,13 @@ public class UserService {
         User dbUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         dbUser.update(request.getNickname(), request.getBio(), request.getFavoriteSpots(), null);
-        if (request.isPasswordChanged())
+        if (request.getIsPasswordChanged())
             dbUser.updatePassword(passwordEncoder.encode(request.getPassword()));
     }
 
     public PasswordCheckResponse checkMyPassword(PasswordCheckRequest request, User user) {
-        return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), user.getPassword()));
+        User dbUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), dbUser.getPassword()));
     }
 }

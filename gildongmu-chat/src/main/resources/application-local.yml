@@ -24,6 +24,10 @@ spring:
     redis:
       password: ${REDIS_PASSWORD}
       timeout: 600ms
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: group-chat
 
 jwt:
   secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==

@@ -1,11 +1,12 @@
 package codeit.chat.service;
 
 import codeit.chat.controller.dto.request.ChatMessageRequest;
-import codeit.chat.controller.dto.response.ChatResponse;
 import codeit.chat.exception.ChatException;
 import codeit.chat.exception.ErrorCode;
+import codeit.common.dto.transfer.ChatDto;
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.chat.entity.Chat;
+import codeit.domain.chat.entity.ChatUser;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.room.entity.Room;
 import codeit.domain.room.repository.RoomRepository;
@@ -17,9 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,18 +50,18 @@ class ChatServiceTest {
     void messageTest_success() {
         //given
         ChatMessageRequest request = new ChatMessageRequest("안녕하세요이");
-        given(roomRepository.findById(anyLong())).willReturn(Optional.of(room));
+        given(roomRepository.existsParticipatedRoomById(anyLong(), any())).willReturn(true);
         given(chatMongoRepository.save(any())).willReturn(Chat.builder()
                 .content("안녕하세요이")
                 .type(ChatType.MESSAGE)
-                .user(userA)
+                .chatUser(ChatUser.from(userA))
                 .roomId(1L).build());
         //when
-        ChatResponse response = chatService.message(1L, request, userA);
+        ChatDto dto = chatService.message(1L, request, userA);
         //then
-        assertEquals(response.getContent(), "안녕하세요이");
-        assertEquals(response.getType(), ChatType.MESSAGE);
-        assertEquals(response.getSender().getNickname(), "a-a");
+        assertEquals(dto.getContent(), "안녕하세요이");
+        assertEquals(dto.getType(), ChatType.MESSAGE);
+        assertEquals(dto.getSender().getNickname(), "a-a");
     }
 
     @Test
@@ -71,7 +69,7 @@ class ChatServiceTest {
     void messageTest_fail_ROOM_NOT_FOUND() {
         //given
         ChatMessageRequest request = new ChatMessageRequest("안녕하세요이");
-        given(roomRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(roomRepository.existsParticipatedRoomById(anyLong(), any())).willReturn(false);
         //when
         ChatException e = assertThrows(ChatException.class,
                 () -> chatService.message(1L, request, userA));
