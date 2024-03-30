@@ -1,7 +1,9 @@
 package codeit;
 
+import codeit.common.client.S3Client;
 import codeit.common.config.KafkaConsumerConfig;
 import codeit.common.config.KafkaProducerConfig;
+import codeit.common.config.S3Config;
 import codeit.common.security.JwtTokenManager;
 import codeit.domain.room.repository.RoomRepository;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,10 @@ class ChatApplicationTests {
     KafkaConsumerConfig kafkaConsumerConfig;
     @MockBean
     KafkaProducerConfig kafkaProducerConfig;
+    @MockBean
+    S3Config s3Config;
+    @MockBean
+    S3Client s3Client;
     @Test
     void contextLoads() {
     }
