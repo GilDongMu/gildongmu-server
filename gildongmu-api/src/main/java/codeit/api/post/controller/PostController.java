@@ -10,13 +10,9 @@ import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.service.PostService;
 import codeit.api.security.UserPrincipal;
 import codeit.common.validator.EnumValue;
-import codeit.domain.Image.entity.Image;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,13 +20,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Validated
@@ -66,28 +60,26 @@ public class PostController {
 
     @Operation(summary = "동행 글 생성")
     @ApiResponse
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal UserPrincipal auth,
-            @RequestPart(required = false, value = "images") List<MultipartFile> images,
-            @RequestPart @Valid PostCreateRequest postCreateRequest) {
+            @RequestBody @Valid PostCreateRequest postCreateRequest) {
 
         if (auth == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        postService.createPost(postCreateRequest, images, auth.getUsername());
+        postService.createPost(postCreateRequest, auth.getUsername());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "동행 글 수정")
     @ApiResponse
-    @PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping("/{postId}")
     public ResponseEntity<PostResponse> updatePost(
             @AuthenticationPrincipal UserPrincipal auth,
-            @RequestPart(required = false, value = "images") List<MultipartFile> images,
             @PathVariable("postId") Long postId,
-            @RequestPart @Valid PostUpdateRequest postUpdateRequest) {
+            @RequestBody @Valid PostUpdateRequest postUpdateRequest) {
 
         if (auth == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -98,7 +90,7 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        return ResponseEntity.ok(postService.updatePost(postId, images, postUpdateRequest));
+        return ResponseEntity.ok(postService.updatePost(postId, postUpdateRequest));
     }
 
     @Operation(summary = "동행 글 삭제")
