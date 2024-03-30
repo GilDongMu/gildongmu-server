@@ -1,4 +1,4 @@
-package codeit.api.participant.dto;
+package codeit.api.participant.dto.response;
 
 import codeit.domain.participant.entity.Participant;
 import codeit.domain.user.entity.User;
@@ -19,21 +19,21 @@ public record ParticipantResponse(
                 .isLeader(participant.isLeader())
                 .isAccepted(participant.isAccepted())
                 .id(participant.getId())
-                .user(codeit.api.participant.dto.ParticipantUserResponse.from(participant.getUser(), currentUserId))
+                .user(ParticipantUserResponse.from(participant.getUser(), currentUserId))
                 .build();
     }
 
     public static ParticipantResponse from(Participant participant) {
         return ParticipantResponse.builder()
                 .id(participant.getId())
-                .user(codeit.api.participant.dto.ParticipantUserResponse.from(participant.getUser()))
+                .user(ParticipantUserResponse.from(participant.getUser()))
                 .build();
     }
 
     public static ParticipantResponse of(Long participantId, User user) {
         return ParticipantResponse.builder()
                 .id(participantId)
-                .user(codeit.api.participant.dto.ParticipantUserResponse.from(user))
+                .user(ParticipantUserResponse.from(user))
                 .build();
     }
 }

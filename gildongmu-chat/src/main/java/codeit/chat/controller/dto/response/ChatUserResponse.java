@@ -1,6 +1,6 @@
 package codeit.chat.controller.dto.response;
 
-import codeit.chat.handler.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatDto;
 import lombok.Builder;
 import lombok.Getter;
 

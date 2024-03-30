@@ -1,4 +1,4 @@
-package codeit.chat.handler.dto.transfer;
+package codeit.common.dto.transfer;
 
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.chat.entity.Chat;
@@ -17,13 +17,13 @@ public class ChatDto {
     private Long roomId;
     private Sender sender;
 
-    public static ChatDto of(Chat chat, Long roomId) {
+    public static ChatDto of(Chat chat) {
         return ChatDto.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
                 .type(chat.getType())
                 .sender(Sender.from(chat.getSender()))
-                .roomId(roomId).build();
+                .roomId(chat.getRoomId()).build();
 
     }
 
