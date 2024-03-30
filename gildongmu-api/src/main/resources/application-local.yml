@@ -48,6 +48,18 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: group-chat
+
+cloud:
+  aws:
+    s3:
+      bucketName:
+    region:
+      static:
+    credentials:
+      accessKey:
+      secretKey:
+    auto: false
+
 jwt:
   secret: Z2lsZG9uZ211LWp3dC1zZWNyZXQta2V5Cg==
 
