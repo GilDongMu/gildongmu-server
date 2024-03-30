@@ -77,8 +77,7 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long viewCount;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    //@OrderBy("asc")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
 
