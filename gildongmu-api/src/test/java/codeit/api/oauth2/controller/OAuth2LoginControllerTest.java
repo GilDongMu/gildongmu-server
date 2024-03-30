@@ -67,6 +67,8 @@ class OAuth2LoginControllerTest {
     @DisplayName("OAuth2 로그인 유저의 회원가입 폼 작성 성공")
     void registerTest_success() throws Exception {
         //given
+        given(oAuth2LoginService.register(any(), any(), any()))
+                .willReturn(TokenResponse.of("any", "any"));
         OAuth2SignUpRequest request = OAuth2SignUpRequest.builder()
                 .nickname("키키")
                 .gender("FEMALE")
@@ -83,7 +85,7 @@ class OAuth2LoginControllerTest {
                                 MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes()))
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                 ).andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isOk());
         //then
     }
 
@@ -97,21 +99,6 @@ class OAuth2LoginControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        //then
-    }
-
-    @Test
-    @WithMockOAuthLoginUser(role = Role.ROLE_USER)
-    @DisplayName("OAuth2 로그인 유저 토큰 발급")
-    void issueToken_success() throws Exception {
-        //given
-        given(oAuth2LoginService.issueToken(any()))
-                .willReturn(TokenResponse.of("any", "any"));
-        //when
-        mockMvc.perform(get("/oauth2/login")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
         //then
     }
 
