@@ -34,6 +34,8 @@ public class UserService {
     }
 
     public PasswordCheckResponse checkMyPassword(PasswordCheckRequest request, User user) {
-        return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), user.getPassword()));
+        User dbUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), dbUser.getPassword()));
     }
 }
