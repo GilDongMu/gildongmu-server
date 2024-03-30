@@ -2,6 +2,7 @@ package codeit.api.exception;
 
 import codeit.api.auth.exception.AuthException;
 import codeit.api.bookmark.exception.BookmarkException;
+import codeit.api.comment.exception.CommentException;
 import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.participant.exception.ParticipantException;
@@ -81,6 +82,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BookmarkException.class)
     public ResponseEntity<ExceptionResponse<String>> handleBookmarkException(BookmarkException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleCommentException(CommentException e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));

@@ -22,6 +22,10 @@ public enum ErrorCode {
     // bookmark
     ALREADY_BOOKMARK(HttpStatus.BAD_REQUEST, "이미 찜한 게시물 입니다."),
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "찜한 게시물이 아닙니다."),
+    // comment
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
+    COMMENT_USER_NOT_FOUND(HttpStatus.FORBIDDEN, "해당 댓글을 쓴 유저가 아닙니다."),
+    COMMENT_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글의 게시글이 아닙니다."),
     // participant
     ALREADY_REGISTERED_PARTICIPANT(HttpStatus.BAD_REQUEST, "이미 참여 신청한 유저입니다."),
     PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 참여자가 없습니다."),
