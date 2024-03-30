@@ -22,6 +22,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,14 +51,28 @@ class PostControllerTest {
     private JwtTokenManager jwtTokenManager;
     @MockBean
     private PostService postService;
+
     @Test
     @WithMockCustomUser(role = Role.ROLE_USER)
     @DisplayName("참여중 및 모집중 동행 글 리스트 조회 성공")
     void retrieveParticipantsTest_success() throws Exception {
         //given
         //when
-        mockMvc.perform(get("/posts/me", 1L)
+        mockMvc.perform(get("/posts/me")
                         .param("type", "LEADER")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @WithMockCustomUser(role = Role.ROLE_USER)
+    @DisplayName("요약 글 조회 성공")
+    void retrievePostSummary_success() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get("/posts/{postId}/summary", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
