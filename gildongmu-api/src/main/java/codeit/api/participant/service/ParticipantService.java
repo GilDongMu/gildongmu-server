@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static codeit.domain.post.constant.Status.*;
+import static codeit.domain.post.constant.Status.CLOSED;
 import static codeit.domain.post.constant.Status.OPEN;
 
 @Service
@@ -52,8 +52,9 @@ public class ParticipantService {
         participant.delete();
         roomRepository.findByPostId(postId)
                 .ifPresent(room -> {
-                    if(Status.ACCEPTED.equals(participantBeforeExit))
-                        room.minusHeadCount();});
+                    if (Status.ACCEPTED.equals(participantBeforeExit))
+                        room.minusHeadCount();
+                });
     }
 
     public void saveLeader(Post post, User user) {
@@ -94,12 +95,12 @@ public class ParticipantService {
     // TODO: extract to event listener
     public void handlingParticipantAcceptedEvent(Post post) {
         Room room = roomRepository.findByPost(post)
-                .orElse(roomRepository.save(Room.builder()
-                                .post(post)
-                                .headcount(2)
-                                .build()));
+                .orElseGet(() -> roomRepository.save(Room.builder()
+                        .post(post)
+                        .headcount(1)
+                        .build()));
         room.plusHeadCount();
-        if(room.getHeadcount() == post.getParticipants())
+        if (room.getHeadcount() == post.getParticipants())
             post.updateStatus(CLOSED);
     }
 
