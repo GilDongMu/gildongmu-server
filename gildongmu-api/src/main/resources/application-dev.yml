@@ -43,15 +43,15 @@ spring:
     bootstrap-servers: ${KAFKA_URI}
     consumer:
       group-id: group-chat
-  cloud:
-    aws:
-      s3:
-        bucketName: ${BUCKET_NAME}
-      region:
-        static: ${REGION}
-      credentials:
-        accessKey: ${ACCESS_KEY}
-        secretKey: ${SECRET_KEY}
-      auto: false
+cloud:
+  aws:
+    s3:
+      bucketName: ${BUCKET_NAME}
+    region:
+      static: ${REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    auto: false
 jwt:
   secret: ${JWT_SECRET}
