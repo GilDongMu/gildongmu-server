@@ -27,9 +27,7 @@ public record PostCreateRequest(
         @NotBlank(message = "Content is required.")
         String content,
 
-        List<String> tag,
-
-        List<ImageCreateRequest> images
+        List<String> tag
 
     ) {
     /*

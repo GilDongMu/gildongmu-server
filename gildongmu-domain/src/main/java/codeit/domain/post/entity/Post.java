@@ -4,6 +4,7 @@ import codeit.domain.bookmark.entity.Bookmark;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.comment.entity.Comment;
 import codeit.domain.common.BaseTimeEntity;
+import codeit.domain.participant.entity.Participant;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.user.entity.User;
@@ -55,7 +56,7 @@ public class Post extends BaseTimeEntity {
 
     private String thumbnail;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
     @Enumerated(EnumType.STRING)
@@ -80,16 +81,14 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-
-    public void add(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participant> postParticipants;
 
     @Builder(toBuilder = true)
     public Post(User user, String destination, String title, String content,
                 LocalDate startDate, LocalDate endDate, String thumbnail, List<Image> images,
                 MemberGender memberGender, Short participants, Status status,
-                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments) {
+                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments, List<Participant> postParticipants) {
         this.user = user;
         this.destination = destination;
         this.title = title;
@@ -104,6 +103,7 @@ public class Post extends BaseTimeEntity {
         this.bookmarks = bookmarks;
         this.viewCount = viewCount;
         this.comments = comments;
+        this.postParticipants = postParticipants;
     }
 
     public void updateDestination(String destination) {

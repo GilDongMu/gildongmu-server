@@ -9,6 +9,7 @@ import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
 import codeit.api.room.exception.RoomException;
 import codeit.api.user.exception.UserException;
+import codeit.common.client.exception.S3Exception;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +113,13 @@ public class GlobalExceptionHandler {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
                 .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ExceptionResponse<String>> handleS3Exception(S3Exception e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
