@@ -11,6 +11,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -63,7 +64,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
@@ -91,6 +91,12 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
 
         return new ProviderManager(daoAuthenticationProvider);
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Bean

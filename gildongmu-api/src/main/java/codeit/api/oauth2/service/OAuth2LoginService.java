@@ -22,12 +22,14 @@ public class OAuth2LoginService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void register(User user, OAuth2SignUpRequest request, MultipartFile image) {
-        User savedUser = userRepository.findById(user.getId())
+    public void register(OAuth2LoginUser oAuth2LoginUser, OAuth2SignUpRequest request, MultipartFile image) {
+        User savedUser = userRepository.findById(oAuth2LoginUser.getUser().getId())
                 .orElseThrow(() -> new OAuth2Exception(ErrorCode.USER_NOT_FOUND));
 
         savedUser.registerOAuth2User(request.getNickname(), request.getGender(),
                 request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), null);
+        oAuth2LoginUser.authorizeUser();
+
     }
 
     public TokenResponse issueToken(OAuth2LoginUser oAuth2LoginUser) {

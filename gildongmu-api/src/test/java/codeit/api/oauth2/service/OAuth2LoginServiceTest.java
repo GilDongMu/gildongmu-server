@@ -10,6 +10,7 @@ import codeit.domain.user.constant.Gender;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginServiceTest {
@@ -42,13 +44,19 @@ class OAuth2LoginServiceTest {
     @InjectMocks
     private OAuth2LoginService oAuth2LoginService;
 
-    User oauth2LoginUser = User.builder()
+    static User user = User.builder()
             .email("userA@google.com")
             .nickname("a-a")
             .role(Role.ROLE_GUEST)
             .build();
     MultipartFile profile = new MockMultipartFile("images", "image.jpg",
             MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes());
+
+    static OAuth2LoginUser oAuth2LoginUser = mock(OAuth2LoginUser.class);
+    @BeforeAll
+    static void init() {
+        given(oAuth2LoginUser.getUser()).willReturn(user);
+    }
 
     @Test
     @DisplayName("회원가입 성공")
@@ -69,7 +77,7 @@ class OAuth2LoginServiceTest {
                 .build();
         given(userRepository.findById(any())).willReturn(Optional.of(savedUser));
         //when
-        oAuth2LoginService.register(oauth2LoginUser, request, profile);
+        oAuth2LoginService.register(oAuth2LoginUser, request, profile);
         //then
         assertEquals(Role.ROLE_USER, savedUser.getRole());
         assertEquals("userA@google.com", savedUser.getEmail());
@@ -84,6 +92,12 @@ class OAuth2LoginServiceTest {
     @DisplayName("회원가입 실패-USER_NOT_FOUND")
     void registerTest_fail_USER_NOT_FOUND() {
         //given
+        User savedUser = User.builder()
+                .email("userA@google.com")
+                .nickname("a-a")
+                .role(Role.ROLE_GUEST)
+                .build();
+
         OAuth2SignUpRequest request = OAuth2SignUpRequest.builder()
                 .nickname("키키")
                 .gender("FEMALE")
@@ -94,7 +108,7 @@ class OAuth2LoginServiceTest {
         given(userRepository.findById(any())).willReturn(Optional.empty());
         //when
         OAuth2Exception e = assertThrows(OAuth2Exception.class,
-                () -> oAuth2LoginService.register(oauth2LoginUser, request, profile));
+                () -> oAuth2LoginService.register(oAuth2LoginUser, request, profile));
         //then
         assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }

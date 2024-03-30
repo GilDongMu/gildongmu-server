@@ -7,9 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OAuth2LoginUser implements OAuth2User {
     @Getter
@@ -19,13 +17,13 @@ public class OAuth2LoginUser implements OAuth2User {
     private final String nameAttributeKey;
 
     public OAuth2LoginUser(OAuth2User oAuth2User, String nameAttributeKey, User user) {
-        authorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        authorities = new ArrayList<>(Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())));
         attributes = oAuth2User.getAttributes();
         this.nameAttributeKey = nameAttributeKey;
         this.user = user;
     }
 
-    public boolean hasAuthority(Role role){
+    public boolean hasAuthority(Role role) {
         return authorities.stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.name()));
     }
@@ -43,5 +41,10 @@ public class OAuth2LoginUser implements OAuth2User {
     @Override
     public String getName() {
         return nameAttributeKey;
+    }
+
+    public void authorizeUser() {
+        this.authorities.remove(authorities.size() - 1);
+        this.authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.name()));
     }
 }
