@@ -1,4 +1,4 @@
-package codeit.api.participant.dto;
+package codeit.api.participant.dto.response;
 
 import codeit.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,6 +1,6 @@
 package codeit.api.participant.controller;
 
-import codeit.api.participant.dto.ParticipantResponse;
+import codeit.api.participant.dto.response.ParticipantResponse;
 import codeit.api.participant.service.ParticipantService;
 import codeit.api.security.UserPrincipal;
 import codeit.common.validator.EnumValue;

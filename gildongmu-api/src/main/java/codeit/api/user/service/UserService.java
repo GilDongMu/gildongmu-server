@@ -29,7 +29,7 @@ public class UserService {
         User dbUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         dbUser.update(request.getNickname(), request.getBio(), request.getFavoriteSpots(), null);
-        if (request.isPasswordChanged())
+        if (request.getIsPasswordChanged())
             dbUser.updatePassword(passwordEncoder.encode(request.getPassword()));
     }
 

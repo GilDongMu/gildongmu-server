@@ -3,9 +3,10 @@ package codeit.chat.service;
 import codeit.chat.controller.dto.request.ChatMessageRequest;
 import codeit.chat.exception.ChatException;
 import codeit.chat.exception.ErrorCode;
-import codeit.chat.handler.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatDto;
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.chat.entity.Chat;
+import codeit.domain.chat.entity.ChatUser;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.room.entity.Room;
 import codeit.domain.room.repository.RoomRepository;
@@ -53,7 +54,7 @@ class ChatServiceTest {
         given(chatMongoRepository.save(any())).willReturn(Chat.builder()
                 .content("안녕하세요이")
                 .type(ChatType.MESSAGE)
-                .user(userA)
+                .chatUser(ChatUser.from(userA))
                 .roomId(1L).build());
         //when
         ChatDto dto = chatService.message(1L, request, userA);

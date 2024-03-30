@@ -1,7 +1,8 @@
 package codeit.api.participant.service;
 
 import codeit.api.exception.ErrorCode;
-import codeit.api.participant.dto.ParticipantResponse;
+import codeit.api.participant.dto.response.ParticipantResponse;
+import codeit.api.participant.dto.transfer.ParticipantAcceptedEvent;
 import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
 import codeit.domain.participant.constant.Status;
@@ -14,6 +15,7 @@ import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
     private final PostRepository postRepository;
     private final RoomRepository roomRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void applyForParticipant(Long postId, User user) {
         Post post = postRepository.findById(postId)
@@ -89,11 +92,11 @@ public class ParticipantService {
                 .findFirst().orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
         participantToBeAccepted.accept();
 
-        handlingParticipantAcceptedEvent(post);
+        handlingParticipantAcceptedEvent(post, participantToBeAccepted.getUser().getId());
     }
 
     // TODO: extract to event listener
-    public void handlingParticipantAcceptedEvent(Post post) {
+    public void handlingParticipantAcceptedEvent(Post post, Long participantUserId) {
         Room room = roomRepository.findByPost(post)
                 .orElseGet(() -> roomRepository.save(Room.builder()
                         .post(post)
@@ -102,6 +105,10 @@ public class ParticipantService {
         room.plusHeadCount();
         if (room.getHeadcount() == post.getParticipants())
             post.updateStatus(CLOSED);
+        applicationEventPublisher.publishEvent(ParticipantAcceptedEvent.builder()
+                .roomId(room.getId())
+                .userId(participantUserId).build());
+
     }
 
 

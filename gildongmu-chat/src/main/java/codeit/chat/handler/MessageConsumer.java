@@ -1,7 +1,8 @@
 package codeit.chat.handler;
 
 import codeit.chat.controller.dto.response.ChatResponse;
-import codeit.chat.handler.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.InfoChatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,6 +18,11 @@ public class MessageConsumer {
     @KafkaHandler
     public void handlerSendChatEvent(ChatDto chatDto) {
         simpMessagingTemplate.convertAndSend("/rooms/" + chatDto.getRoomId(), ChatResponse.from(chatDto));
+    }
+
+    @KafkaHandler
+    public void handlerSendChatEvent(InfoChatDto infoChatDto) {
+        simpMessagingTemplate.convertAndSend("/rooms/" + infoChatDto.getRoomId(), ChatResponse.from(infoChatDto));
     }
 
 }

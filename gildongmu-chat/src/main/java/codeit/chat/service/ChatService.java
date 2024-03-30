@@ -3,11 +3,11 @@ package codeit.chat.service;
 import codeit.chat.controller.dto.request.ChatMessageRequest;
 import codeit.chat.exception.ChatException;
 import codeit.chat.exception.ErrorCode;
-import codeit.chat.handler.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatDto;
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.chat.entity.Chat;
+import codeit.domain.chat.entity.ChatUser;
 import codeit.domain.chat.repository.ChatMongoRepository;
-import codeit.domain.room.entity.Room;
 import codeit.domain.room.repository.RoomRepository;
 import codeit.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class ChatService {
                 .roomId(roomId)
                 .content(request.getMessage())
                 .type(ChatType.MESSAGE)
-                .user(user)
-                .build()), roomId);
+                .chatUser(ChatUser.from(user))
+                .build()));
     }
 
     private void validateRoomParticipant(Long roomId, Long userId) {

@@ -137,7 +137,7 @@ class RoomServiceTest {
         List<ChatResponse> chats = chatGroupByDateResponses.get(0).chats();
         assertEquals(chatGroupByDateResponses.size(), 2);
         assertEquals(chats.get(0).content(), "안녕하세요");
-        assertTrue(chats.get(0).isMessageType());
+        assertEquals(chats.get(0).type(), ChatType.MESSAGE);
         assertEquals(chats.get(0).sender().nickname(), "a");
     }
 

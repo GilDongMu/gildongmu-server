@@ -1,6 +1,7 @@
-package codeit.chat.config;
+package codeit.common.config;
 
-import codeit.chat.handler.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.InfoChatDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -47,9 +48,10 @@ public class KafkaConsumerConfig {
         StringJsonMessageConverter converter = new StringJsonMessageConverter();
         DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
         typeMapper.setTypePrecedence(Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID);
-        typeMapper.addTrustedPackages("codeit.chat.handler.dto.transfer");
+        typeMapper.addTrustedPackages("codeit.common.dto.transfer");
         Map<String, Class<?>> mapping = new HashMap<>();
         mapping.put("chatDto", ChatDto.class);
+        mapping.put("infoChatDto", InfoChatDto.class);
         typeMapper.setIdClassMapping(mapping);
         converter.setTypeMapper(typeMapper);
         return converter;

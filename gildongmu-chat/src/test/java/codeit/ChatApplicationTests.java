@@ -1,7 +1,7 @@
 package codeit;
 
-import codeit.chat.config.KafkaConsumerConfig;
-import codeit.chat.config.KafkaProducerConfig;
+import codeit.common.config.KafkaConsumerConfig;
+import codeit.common.config.KafkaProducerConfig;
 import codeit.common.security.JwtTokenManager;
 import codeit.domain.room.repository.RoomRepository;
 import org.junit.jupiter.api.Test;

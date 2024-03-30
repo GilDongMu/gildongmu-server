@@ -18,7 +18,7 @@ public class UserProfileRequest {
     @Size(min = 1, max = 8, message = "invalid size nickname")
     private String nickname;
 
-    private boolean isPasswordChanged;
+    private Boolean isPasswordChanged;
 
     @NotBlank(message = "invalid blank password")
     @Size(min = 8, message = "invalid size password")

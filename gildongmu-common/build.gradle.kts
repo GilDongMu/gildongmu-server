@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.hibernate:hibernate-validator:8.0.1.Final")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.kafka:spring-kafka")
 
 	implementation(project(":gildongmu-domain"))
 }
