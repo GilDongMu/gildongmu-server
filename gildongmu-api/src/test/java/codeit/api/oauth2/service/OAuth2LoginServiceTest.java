@@ -1,5 +1,6 @@
 package codeit.api.oauth2.service;
 
+import ch.qos.logback.core.util.TimeUtil;
 import codeit.api.exception.ErrorCode;
 import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
@@ -10,16 +11,23 @@ import codeit.domain.user.constant.Gender;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -30,10 +38,10 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginServiceTest {
@@ -51,11 +59,21 @@ class OAuth2LoginServiceTest {
             .build();
     MultipartFile profile = new MockMultipartFile("images", "image.jpg",
             MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes());
-
+    static MockedStatic<RequestContextHolder> contextHolderMockedStatic = mockStatic(RequestContextHolder.class);
     static OAuth2LoginUser oAuth2LoginUser = mock(OAuth2LoginUser.class);
+    static ServletRequestAttributes servletRequestAttributes = mock(ServletRequestAttributes.class);
+    static HttpServletRequest servletRequest = new MockHttpServletRequest();
     @BeforeAll
     static void init() {
         given(oAuth2LoginUser.getUser()).willReturn(user);
+        contextHolderMockedStatic.when(RequestContextHolder::currentRequestAttributes)
+                .thenReturn(servletRequestAttributes);
+        given(servletRequestAttributes.getRequest()).willReturn(servletRequest);
+    }
+
+    @AfterAll
+    static void tearDown(){
+        contextHolderMockedStatic.close();
     }
 
     @Test
