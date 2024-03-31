@@ -37,12 +37,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OAuth2LoginServiceTest {
@@ -100,9 +98,42 @@ class OAuth2LoginServiceTest {
         //when
         oAuth2LoginService.register(oAuth2LoginUser, request, profile);
         //then
+        verify(s3Client, times(1)).upload(any());
         assertEquals(Role.ROLE_USER, savedUser.getRole());
         assertEquals("userA@google.com", savedUser.getEmail());
         assertEquals(Gender.FEMALE, savedUser.getGender());
+        assertEquals(LocalDate.parse("2012-01-01"), savedUser.getDateOfBirth());
+        assertEquals("안녕하세요", savedUser.getBio());
+        assertEquals("키키", savedUser.getNickname());
+        assertEquals(3, savedUser.getFavoriteSpots().size());
+    }
+
+    @Test
+    @DisplayName("회원가입 성공")
+    void registerTest_successWhenMultipartFileIsNull() {
+        //given
+        User savedUser = User.builder()
+                .email("userA@google.com")
+                .nickname("a-a")
+                .role(Role.ROLE_GUEST)
+                .build();
+
+        OAuth2SignUpRequest request = OAuth2SignUpRequest.builder()
+                .nickname("키키")
+                .gender("FEMALE")
+                .dayOfBirth("2012-01-01")
+                .favoriteSpots(Set.of("다낭", "LA", "제주도"))
+                .bio("안녕하세요")
+                .build();
+        given(userRepository.findById(any())).willReturn(Optional.of(savedUser));
+        //when
+        oAuth2LoginService.register(oAuth2LoginUser, request, null);
+        //then
+        verify(s3Client, times(0)).upload(any());
+        assertEquals(Role.ROLE_USER, savedUser.getRole());
+        assertEquals("userA@google.com", savedUser.getEmail());
+        assertEquals(Gender.FEMALE, savedUser.getGender());
+        assertNull(savedUser.getProfilePath());
         assertEquals(LocalDate.parse("2012-01-01"), savedUser.getDateOfBirth());
         assertEquals("안녕하세요", savedUser.getBio());
         assertEquals("키키", savedUser.getNickname());

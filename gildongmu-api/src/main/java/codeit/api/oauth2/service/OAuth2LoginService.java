@@ -32,8 +32,8 @@ public class OAuth2LoginService {
                 .orElseThrow(() -> new OAuth2Exception(ErrorCode.USER_NOT_FOUND));
 
         savedUser.registerOAuth2User(request.getNickname(), request.getGender(),
-                request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), s3Client.upload(profile));
-        savedUser.updateProfilePath((Optional.of(profile).map(s3Client::upload).orElse(null)));
+                request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(),
+                Optional.ofNullable(profile).map(s3Client::upload).orElse(null));
         return issueToken(oAuth2LoginUser);
     }
 

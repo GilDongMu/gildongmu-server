@@ -43,6 +43,10 @@ jobs:
             REDIS_PASSWORD=${{ secrets.REDIS_DEVELOP_PASSWORD }}
             REDIS_HOST=${{ secrets.REDIS_DEVELOP_HOST }}
             KAFKA_URI=${{ secrets.KAFKA_DEVELOP_URI }}
+            S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}
+            S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}
+            S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}
+            S3_REGION=${{ secrets.S3_REGION }}
             PROFILE=dev
             
 
