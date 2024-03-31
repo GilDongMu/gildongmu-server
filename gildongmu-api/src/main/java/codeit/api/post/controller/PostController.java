@@ -10,10 +10,7 @@ import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.service.PostService;
 import codeit.api.security.UserPrincipal;
 import codeit.common.validator.EnumValue;
-import codeit.domain.Image.entity.Image;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -45,16 +42,15 @@ public class PostController {
     @Operation(description = "동행 글 전체 조회.", summary = "동행 목록 조회")
     public ResponseEntity<PostListResponse> getPosts(
             @AuthenticationPrincipal UserPrincipal auth,
-            @RequestParam(required = false, defaultValue = "latest", value = "sort") String postSort,
+            @RequestParam(required = false, value = "sortby") String postSort,
             @RequestParam(required = false, value = "filter") String postFilter,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "10") int size
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
 
-        Sort sort = postService.getSort(postSort);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageableWithoutSort = PageRequest.of(
+            pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
 
-        PostListResponse posts = postService.findPosts(postFilter, pageable, auth);
+        PostListResponse posts = postService.findPosts(postFilter, postSort, pageableWithoutSort, auth);
         return ResponseEntity.ok(posts);
     }
 
