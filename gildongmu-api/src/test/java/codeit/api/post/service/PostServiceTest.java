@@ -4,6 +4,7 @@ import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.domain.Image.Repository.ImageRepository;
+import codeit.domain.bookmark.repository.BookmarkRepository;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -44,6 +45,8 @@ class PostServiceTest {
     private UserRepository userRepository;
     @Mock
     private ImageRepository imageRepository;
+    @Mock
+    private BookmarkRepository bookmarkRepository;
     @Mock
     private TagService tagService;
     @Mock

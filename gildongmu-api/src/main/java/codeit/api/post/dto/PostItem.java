@@ -15,6 +15,7 @@ public record PostItem(
         List<String> tag,
         String thumbnail,
         Long countOfComments,
-        Long countOfBookmarks
+        Long countOfBookmarks,
+        boolean myBookmark
 ) {
 }

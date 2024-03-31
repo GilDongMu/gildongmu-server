@@ -44,6 +44,7 @@ public class PostController {
     @ApiResponse
     @Operation(description = "동행 글 전체 조회.", summary = "동행 목록 조회")
     public ResponseEntity<PostListResponse> getPosts(
+            @AuthenticationPrincipal UserPrincipal auth,
             @RequestParam(required = false, defaultValue = "latest", value = "sort") String postSort,
             @RequestParam(required = false, value = "filter") String postFilter,
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -53,7 +54,7 @@ public class PostController {
         Sort sort = postService.getSort(postSort);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        PostListResponse posts = postService.findPosts(postFilter, pageable);
+        PostListResponse posts = postService.findPosts(postFilter, pageable, auth);
         return ResponseEntity.ok(posts);
     }
 
@@ -128,7 +129,8 @@ public class PostController {
             @PageableDefault(page = 0, size = 10) Pageable pageable,
             @RequestParam @EnumValue(enumClass = RetrievingType.class) String type,
             @AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(postService.retrieveMyPosts(principal.getUser(), type, pageable));
+        return ResponseEntity.ok(postService.retrieveMyPosts(
+            principal.getUser(), type, pageable));
     }
 
     @Operation(summary = "요약 글 조회")

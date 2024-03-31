@@ -1,5 +1,6 @@
 package codeit.api.post.service;
 
+import codeit.api.bookmark.service.BookmarkService;
 import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.TripDate;
@@ -11,9 +12,12 @@ import codeit.api.post.dto.response.PostListResponse;
 import codeit.api.post.dto.response.PostResponse;
 import codeit.api.post.dto.response.PostSummaryResponse;
 import codeit.api.post.exception.PostException;
+import codeit.api.security.UserPrincipal;
 import codeit.common.client.S3Client;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
+import codeit.domain.bookmark.entity.Bookmark;
+import codeit.domain.bookmark.repository.BookmarkRepository;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -25,6 +29,8 @@ import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.net.URL;
+import java.util.Optional;
+import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,12 +57,13 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final RoomRepository roomRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final TagService tagService;
     private final ImageService imageService;
     private final ParticipantService participantService;
     private final S3Client s3Client;
 
-    public PostListResponse findPosts(String postFilter, Pageable pageable) {
+    public PostListResponse findPosts(String postFilter, Pageable pageable, UserPrincipal auth) {
         Specification<Post> specification = getFilter(postFilter);
 
         Page<Post> postPage;
@@ -67,8 +74,12 @@ public class PostService {
             postPage = postRepository.findAll(pageable);
         }
 
+        User user = Optional.ofNullable(auth)
+            .map(UserPrincipal::getUser)
+            .orElse(null);
+
         List<PostItem> postListItems = postPage.getContent().stream()
-                .map(this::mapToPostListItem)
+                .map(post -> mapToPostListItem(post, user))
                 .collect(Collectors.toList());
 
         return new PostListResponse(
@@ -85,11 +96,14 @@ public class PostService {
         );
     }
 
-    private PostItem mapToPostListItem(Post post) {
+    private PostItem mapToPostListItem(Post post, User user) {
         List<Tag> tags = tagService.findTagListByPost(post);
         List<String> tagList = tags.stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
+
+        boolean myBookmark = checkBookmarkedByUser(user, post);
+
         long countOfBookmarks =
                 post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
@@ -106,8 +120,13 @@ public class PostService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                countOfBookmarks
+                countOfBookmarks,
+                myBookmark
         );
+    }
+
+    private boolean checkBookmarkedByUser(User user, Post post) {
+        return bookmarkRepository.existsByUserAndPost(user, post);
     }
 
     public Sort getSort(String postSort) {
@@ -247,9 +266,9 @@ public class PostService {
     public Slice<PostItem> retrieveMyPosts(User user, String type, Pageable pageable) {
         if (RetrievingType.LEADER.name().equals(type))
             return postRepository.findByUserOrderByStatusDesc(user, pageable)
-                    .map(this::mapToPostListItem);
+                    .map(post -> mapToPostListItem(post, user));
         return postRepository.findByParticipantUserOrderByStatusDesc(user.getId(), pageable)
-                .map(this::mapToPostListItem);
+                .map(post -> mapToPostListItem(post, user));
     }
 
     public PostSummaryResponse retrievePostSummary(User user, Long postId) {
