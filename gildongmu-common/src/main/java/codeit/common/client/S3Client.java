@@ -1,30 +1,23 @@
 package codeit.common.client;
 
-import static codeit.common.exception.ErrorCode.DELETE_FAILED;
-import static codeit.common.exception.ErrorCode.FILE_CONVERT_ERROR;
-import static codeit.common.exception.ErrorCode.UPLOAD_FAILED;
-import static codeit.common.exception.ErrorCode.WRONG_FILE_FORMAT;
-
 import codeit.common.client.exception.S3Exception;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.UUID;
+
+import static codeit.common.exception.ErrorCode.*;
 
 @Slf4j
 @Component
@@ -76,9 +69,9 @@ public class S3Client {
     }
 
     private String putS3(MultipartFile uploadFile, String fileName, ObjectMetadata metadata) {
-        try (InputStream inputStream = uploadFile.getInputStream()){
+        try (InputStream inputStream = uploadFile.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, metadata)
-            .withCannedAcl(CannedAccessControlList.PublicRead));
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
             return amazonS3.getUrl(bucketName, fileName).toString();
         } catch (IOException e) {
             throw new S3Exception(UPLOAD_FAILED);
@@ -90,7 +83,7 @@ public class S3Client {
         try {
             amazonS3.deleteObject(bucketName, key);
         } catch (Exception e) {
-            throw new S3Exception(DELETE_FAILED);
+            log.error(" Code : {}, Message : {}", DELETE_FAILED.name(), DELETE_FAILED.getMessage());
         }
     }
 
