@@ -6,6 +6,8 @@ import codeit.api.user.dto.request.UserProfileRequest;
 import codeit.api.user.dto.response.PasswordCheckResponse;
 import codeit.api.user.dto.response.UserProfileResponse;
 import codeit.api.user.exception.UserException;
+import codeit.common.client.S3Client;
+import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
@@ -29,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -37,6 +39,10 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private ChatMongoRepository chatMongoRepository;
+    @Mock
+    private S3Client s3Client;
     @InjectMocks
     private UserService userService;
 
@@ -96,6 +102,51 @@ class UserServiceTest {
         assertEquals("라이언", userA.getNickname());
         assertEquals("괌", userA.getFavoriteSpots().get(0));
     }
+
+    @Test
+    @DisplayName("나의 정보 수정 성공-패스워드 변경 안함")
+    void modifyProfileTest_success_WhenIsPasswordChangedFalse() {
+        //given
+        UserProfileRequest request = UserProfileRequest.builder()
+                .bio("안녕")
+                .isPasswordChanged(false)
+                .favoriteSpots(Set.of("괌"))
+                .password("changed-password")
+                .nickname("라이언")
+                .build();
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(userA));
+        //when
+        userService.modifyProfile(request, profile, user);
+        //then
+        verify(passwordEncoder, times(0)).encode(anyString());
+        assertEquals("안녕", userA.getBio());
+        assertEquals("encoded", userA.getPassword());
+        assertEquals("라이언", userA.getNickname());
+        assertEquals("괌", userA.getFavoriteSpots().get(0));
+    }
+
+    @Test
+    @DisplayName("나의 정보 수정 실패-PASSWORD_NOT_VALID")
+    void modifyProfileTest_fail_PASSWORD_NOT_VALID() {
+        //given
+        UserProfileRequest request = UserProfileRequest.builder()
+                .bio("안녕")
+                .isPasswordChanged(true)
+                .favoriteSpots(Set.of("괌"))
+                .password(null)
+                .nickname("라이언")
+                .build();
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(userA));
+        //when
+        UserException e = assertThrows(UserException.class,
+                () -> userService.modifyProfile(request, profile, user));
+        //then
+        verify(passwordEncoder, times(0)).encode(anyString());
+        assertEquals(ErrorCode.PASSWORD_NOT_VALID, e.getErrorCode());
+    }
+
 
     @Test
     @DisplayName("나의 정보 수정 실패-USER_NOT_FOUND")

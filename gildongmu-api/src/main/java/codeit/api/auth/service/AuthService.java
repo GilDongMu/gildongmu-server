@@ -5,6 +5,7 @@ import codeit.api.auth.dto.request.SignUpRequest;
 import codeit.api.auth.dto.response.EmailCheckResponse;
 import codeit.api.auth.dto.response.TokenResponse;
 import codeit.api.auth.exception.AuthException;
+import codeit.common.client.S3Client;
 import codeit.common.security.JwtTokenManager;
 import codeit.domain.user.constant.Role;
 import codeit.domain.user.entity.User;
@@ -23,6 +24,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenManager jwtTokenManager;
+    private final S3Client s3Client;
 
     public void register(SignUpRequest request, MultipartFile profile) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -37,6 +39,7 @@ public class AuthService {
                         .gender(request.getGender())
                         .dateOfBirth(request.getDayOfBirth())
                         .nickname(request.getNickname())
+                        .profilePath(s3Client.upload(profile))
                         .password(passwordEncoder.encode(request.getPassword()))
                         .favoriteSpots(request.getFavoriteSpots())
                         .build()

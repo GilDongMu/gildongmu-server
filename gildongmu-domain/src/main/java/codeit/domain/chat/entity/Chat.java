@@ -2,6 +2,7 @@ package codeit.domain.chat.entity;
 
 import codeit.domain.chat.constant.ChatType;
 import codeit.domain.common.BaseTimeMongoDocument;
+import codeit.domain.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +27,10 @@ public class Chat extends BaseTimeMongoDocument {
         this.roomId = roomId;
         this.content = content;
         this.sender = chatUser;
+    }
+
+    public Chat updateChatUserProfile(User user){
+        this.sender = ChatUser.from(user);
+        return this;
     }
 }

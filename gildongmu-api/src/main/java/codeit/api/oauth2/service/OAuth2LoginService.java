@@ -5,6 +5,7 @@ import codeit.api.oauth2.dto.request.OAuth2SignUpRequest;
 import codeit.api.oauth2.dto.response.TokenResponse;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.security.OAuth2LoginUser;
+import codeit.common.client.S3Client;
 import codeit.common.security.JwtTokenManager;
 import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
@@ -23,14 +24,15 @@ import java.util.Optional;
 public class OAuth2LoginService {
     private final JwtTokenManager jwtTokenManager;
     private final UserRepository userRepository;
+    private final S3Client s3Client;
 
     @Transactional
-    public TokenResponse register(OAuth2LoginUser oAuth2LoginUser, OAuth2SignUpRequest request, MultipartFile image) {
+    public TokenResponse register(OAuth2LoginUser oAuth2LoginUser, OAuth2SignUpRequest request, MultipartFile profile) {
         User savedUser = userRepository.findById(oAuth2LoginUser.getUser().getId())
                 .orElseThrow(() -> new OAuth2Exception(ErrorCode.USER_NOT_FOUND));
 
         savedUser.registerOAuth2User(request.getNickname(), request.getGender(),
-                request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), null);
+                request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), s3Client.upload(profile));
         return issueToken(oAuth2LoginUser);
     }
 

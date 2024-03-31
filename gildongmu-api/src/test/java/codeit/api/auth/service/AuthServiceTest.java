@@ -15,6 +15,7 @@ import codeit.api.auth.dto.response.EmailCheckResponse;
 import codeit.api.auth.dto.response.TokenResponse;
 import codeit.api.auth.exception.AuthException;
 import codeit.api.exception.ErrorCode;
+import codeit.common.client.S3Client;
 import codeit.common.security.JwtTokenManager;
 import codeit.common.security.dto.transfer.TokenDto;
 import codeit.domain.user.constant.Gender;
@@ -45,6 +46,8 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private JwtTokenManager jwtTokenManager;
+    @Mock
+    private S3Client s3Client;
     @InjectMocks
     private AuthService authService;
 

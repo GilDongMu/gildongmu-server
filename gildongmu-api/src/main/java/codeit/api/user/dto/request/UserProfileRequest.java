@@ -1,13 +1,12 @@
 package codeit.api.user.dto.request;
 
+import codeit.api.exception.ErrorCode;
+import codeit.api.user.exception.UserException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Builder
@@ -20,7 +19,7 @@ public class UserProfileRequest {
 
     private Boolean isPasswordChanged;
 
-    @NotBlank(message = "invalid blank password")
+    @Getter(AccessLevel.NONE)
     @Size(min = 8, message = "invalid size password")
     private String password;
 
@@ -34,5 +33,14 @@ public class UserProfileRequest {
 
     public List<String> getFavoriteSpots() {
         return new ArrayList<>(favoriteSpots);
+    }
+
+    public Optional<String> getPassword() {
+        if (!isPasswordChanged) return Optional.empty();
+        try {
+            return Optional.of(password);
+        } catch (NullPointerException e) {
+            throw new UserException(ErrorCode.PASSWORD_NOT_VALID);
+        }
     }
 }
