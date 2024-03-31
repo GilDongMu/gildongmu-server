@@ -63,16 +63,19 @@ public class User extends BaseTimeEntity {
         this.profilePath = profilePath;
     }
 
-    public void update(String nickname, String bio, List<String> favoriteSpots, String profilePath) {
+    public void update(String nickname, String bio, List<String> favoriteSpots) {
         this.nickname = nickname;
         this.bio = bio;
         this.favoriteSpots = favoriteSpots;
         this.role = Role.ROLE_USER;
-        this.profilePath = profilePath;
     }
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateProfilePath(String profilePath) {
+        this.profilePath = profilePath;
     }
 
     @Builder
