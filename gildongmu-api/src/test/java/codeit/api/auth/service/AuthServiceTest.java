@@ -1,9 +1,7 @@
 package codeit.api.auth.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -79,11 +77,45 @@ class AuthServiceTest {
         authService.register(request, profile);
         //then
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(s3Client, times(1)).upload(any());
         verify(userRepository, times(1)).save(captor.capture());
         User savedUser = captor.getValue();
         assertEquals(Role.ROLE_USER, savedUser.getRole());
         assertEquals("abcde@naver.com", savedUser.getEmail());
         assertEquals(Gender.FEMALE, savedUser.getGender());
+        assertEquals(LocalDate.parse("2012-01-01"), savedUser.getDateOfBirth());
+        assertEquals("안녕하세요", savedUser.getBio());
+        assertEquals("키키", savedUser.getNickname());
+        assertEquals("encoded-password", savedUser.getPassword());
+        assertEquals(3, savedUser.getFavoriteSpots().size());
+    }
+
+    @Test
+    @DisplayName("회원가입 성공")
+    void registerTest_successWhenMultipartFileIsNull() {
+        //given
+        SignUpRequest request = SignUpRequest.builder()
+                .email("abcde@naver.com")
+                .nickname("키키")
+                .password("1234")
+                .gender("FEMALE")
+                .dayOfBirth("2012-01-01")
+                .favoriteSpots(Set.of("다낭", "LA", "제주도"))
+                .bio("안녕하세요")
+                .build();
+        given(userRepository.existsByEmail(anyString())).willReturn(false);
+        given(passwordEncoder.encode(anyString())).willReturn("encoded-password");
+        //when
+        authService.register(request, null);
+        //then
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository, times(1)).save(captor.capture());
+        verify(s3Client, times(0)).upload(any());
+        User savedUser = captor.getValue();
+        assertEquals(Role.ROLE_USER, savedUser.getRole());
+        assertEquals("abcde@naver.com", savedUser.getEmail());
+        assertEquals(Gender.FEMALE, savedUser.getGender());
+        assertNull(savedUser.getProfilePath());
         assertEquals(LocalDate.parse("2012-01-01"), savedUser.getDateOfBirth());
         assertEquals("안녕하세요", savedUser.getBio());
         assertEquals("키키", savedUser.getNickname());
