@@ -79,8 +79,8 @@ public class S3Client {
     }
 
     public void delete(String imageUrl) {
-        String key = getKeyFromImageUrl(imageUrl);
         try {
+            String key = getKeyFromImageUrl(imageUrl);
             amazonS3.deleteObject(bucketName, key);
         } catch (Exception e) {
             log.error(" Code : {}, Message : {}", DELETE_FAILED.name(), DELETE_FAILED.getMessage());
