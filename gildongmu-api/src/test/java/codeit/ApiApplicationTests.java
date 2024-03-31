@@ -5,6 +5,7 @@ import codeit.common.config.KafkaConsumerConfig;
 import codeit.common.config.KafkaProducerConfig;
 import codeit.common.config.S3Config;
 import codeit.common.security.JwtTokenManager;
+import codeit.domain.post.repository.PostRepository;
 import codeit.domain.room.repository.RoomRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,8 @@ class ApiApplicationTests {
 	ClientRegistrationRepository clientRegistrationRepository;
 	@MockBean
 	RoomRepository roomRepository;
+	@MockBean
+	PostRepository postRepository;
 	@MockBean
 	KafkaTemplate<String, Object> kafkaTemplate;
 	@MockBean
