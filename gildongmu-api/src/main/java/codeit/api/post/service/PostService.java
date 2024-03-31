@@ -1,5 +1,6 @@
 package codeit.api.post.service;
 
+import codeit.api.bookmark.service.BookmarkService;
 import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.TripDate;
@@ -14,6 +15,8 @@ import codeit.api.post.exception.PostException;
 import codeit.common.client.S3Client;
 import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
+import codeit.domain.bookmark.entity.Bookmark;
+import codeit.domain.bookmark.repository.BookmarkRepository;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -51,12 +54,13 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final RoomRepository roomRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final TagService tagService;
     private final ImageService imageService;
     private final ParticipantService participantService;
     private final S3Client s3Client;
 
-    public PostListResponse findPosts(String postFilter, Pageable pageable) {
+    public PostListResponse findPosts(String postFilter, Pageable pageable, String email) {
         Specification<Post> specification = getFilter(postFilter);
 
         Page<Post> postPage;
@@ -68,7 +72,7 @@ public class PostService {
         }
 
         List<PostItem> postListItems = postPage.getContent().stream()
-                .map(this::mapToPostListItem)
+                .map(post -> mapToPostListItem(post, email))
                 .collect(Collectors.toList());
 
         return new PostListResponse(
@@ -85,11 +89,15 @@ public class PostService {
         );
     }
 
-    private PostItem mapToPostListItem(Post post) {
+    private PostItem mapToPostListItem(Post post, String email) {
         List<Tag> tags = tagService.findTagListByPost(post);
         List<String> tagList = tags.stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        boolean myBookmark = checkBookmarkedByUser(user);
+
         long countOfBookmarks =
                 post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
@@ -106,8 +114,15 @@ public class PostService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                countOfBookmarks
+                countOfBookmarks,
+                myBookmark
         );
+    }
+
+    private boolean checkBookmarkedByUser(User user) {
+        List<Bookmark> bookmarks = bookmarkRepository.findByUser(user);
+        return bookmarks.stream()
+            .anyMatch(bookmark -> bookmark.getUser().equals(user));
     }
 
     public Sort getSort(String postSort) {
@@ -244,12 +259,12 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    public Slice<PostItem> retrieveMyPosts(User user, String type, Pageable pageable) {
+    public Slice<PostItem> retrieveMyPosts(User user, String type, Pageable pageable, String email) {
         if (RetrievingType.LEADER.name().equals(type))
             return postRepository.findByUserOrderByStatusDesc(user, pageable)
-                    .map(this::mapToPostListItem);
+                    .map(post -> mapToPostListItem(post, email));
         return postRepository.findByParticipantUserOrderByStatusDesc(user.getId(), pageable)
-                .map(this::mapToPostListItem);
+                .map(post -> mapToPostListItem(post, email));
     }
 
     public PostSummaryResponse retrievePostSummary(User user, Long postId) {
