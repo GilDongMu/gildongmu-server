@@ -25,6 +25,7 @@ public class StompMessageInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        log.error("connected : " + accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION));
 
         if (StompCommand.CONNECT.equals(accessor.getCommand()))
             authenticate(accessor);
