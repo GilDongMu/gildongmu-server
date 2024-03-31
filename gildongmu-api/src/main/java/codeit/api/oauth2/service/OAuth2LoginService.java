@@ -33,6 +33,7 @@ public class OAuth2LoginService {
 
         savedUser.registerOAuth2User(request.getNickname(), request.getGender(),
                 request.getDayOfBirth(), request.getBio(), request.getFavoriteSpots(), s3Client.upload(profile));
+        savedUser.updateProfilePath((Optional.of(profile).map(s3Client::upload).orElse(null)));
         return issueToken(oAuth2LoginUser);
     }
 

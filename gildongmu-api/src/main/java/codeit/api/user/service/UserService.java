@@ -37,14 +37,24 @@ public class UserService {
     public void modifyProfile(UserProfileRequest request, MultipartFile image, User user) {
         User dbUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
-        dbUser.update(request.getNickname(), request.getBio(), request.getFavoriteSpots(), s3Client.upload(image));
-        if (request.getIsPasswordChanged())
-            dbUser.updatePassword(passwordEncoder.encode(request.getPassword()
-                    .orElseThrow(() -> new UserException(ErrorCode.PASSWORD_NOT_VALID))));
+        dbUser.update(request.getNickname(), request.getBio(), request.getFavoriteSpots());
+        updatePasswordIfNeeded(request.getIsPasswordChanged(), request.getPassword(), dbUser);
+        updateProfileImageIfNeeded(Optional.ofNullable(image), dbUser);
 
-        s3Client.delete(user.getProfilePath());
         chatMongoRepository.saveAll(chatMongoRepository.findBySenderUserId(user.getId())
                 .stream().map(chat -> chat.updateChatUserProfile(user)).collect(Collectors.toList()));
+    }
+
+    public void updatePasswordIfNeeded(Boolean isPasswordChanged, Optional<String> maybePassword, User dbUser) {
+        if (isPasswordChanged)
+            dbUser.updatePassword(passwordEncoder.encode(
+                    maybePassword.orElseThrow(() -> new UserException(ErrorCode.PASSWORD_NOT_VALID))));
+    }
+
+    public void updateProfileImageIfNeeded(Optional<MultipartFile> maybeImage, User dbUser) {
+        if (maybeImage.isEmpty()) return;
+        s3Client.delete(dbUser.getProfilePath());
+        dbUser.updateProfilePath(s3Client.upload(maybeImage.get()));
     }
 
     public PasswordCheckResponse checkMyPassword(PasswordCheckRequest request, User user) {
