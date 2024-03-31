@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 import static codeit.api.exception.ErrorCode.*;
 
 @Service
@@ -39,12 +41,13 @@ public class AuthService {
                         .gender(request.getGender())
                         .dateOfBirth(request.getDayOfBirth())
                         .nickname(request.getNickname())
-                        .profilePath(s3Client.upload(profile))
+                        .profilePath(Optional.of(profile).map(s3Client::upload).orElse(null))
                         .password(passwordEncoder.encode(request.getPassword()))
                         .favoriteSpots(request.getFavoriteSpots())
                         .build()
         );
     }
+
 
     public TokenResponse login(LogInRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
