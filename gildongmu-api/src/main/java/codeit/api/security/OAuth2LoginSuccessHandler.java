@@ -36,11 +36,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/oauth2/signup");
         } else if (oAuth2LoginUser.hasAuthority(Role.ROLE_USER)) {
             response.setStatus(HttpStatus.OK.value());
-            response.setContentType("application/json");
-            response.setCharacterEncoding("utf-8");
-            TokenResponse tokenResponse = oAuth2LoginService.issueToken(oAuth2LoginUser);
-            response.getWriter().write(objectMapper.writeValueAsString(tokenResponse));
-            response.setHeader(HttpHeaders.SET_COOKIE, tokenResponse.generateCookie());
             getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/oauth2/login");
         }
     }
