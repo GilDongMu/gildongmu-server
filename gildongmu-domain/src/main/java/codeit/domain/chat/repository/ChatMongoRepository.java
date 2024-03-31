@@ -5,7 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
+
 
 public interface ChatMongoRepository extends MongoRepository<Chat, String> {
     Slice<Chat> findByRoomId(Long roomId, Pageable pageable);
+    List<Chat> findBySenderUserId(Long userId);
 }
