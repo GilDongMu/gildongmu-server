@@ -54,7 +54,7 @@ public class PostController {
         Sort sort = postService.getSort(postSort);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        PostListResponse posts = postService.findPosts(postFilter, pageable, auth.getUsername());
+        PostListResponse posts = postService.findPosts(postFilter, pageable, auth);
         return ResponseEntity.ok(posts);
     }
 
@@ -130,7 +130,7 @@ public class PostController {
             @RequestParam @EnumValue(enumClass = RetrievingType.class) String type,
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(postService.retrieveMyPosts(
-            principal.getUser(), type, pageable, principal.getUsername()));
+            principal.getUser(), type, pageable));
     }
 
     @Operation(summary = "요약 글 조회")

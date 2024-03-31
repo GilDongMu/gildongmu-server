@@ -64,7 +64,7 @@ public class BookmarkService {
 
         return bookmarks.stream()
                 .map(Bookmark::getPost)
-                .map(this::mapToPostListItem)
+                .map(post -> mapToPostListItem(post, user))
                 .collect(Collectors.toList());
 
     }
@@ -91,11 +91,13 @@ public class BookmarkService {
         }
     }
 
-    private PostItem mapToPostListItem(Post post) {
+    private PostItem mapToPostListItem(Post post, User user) {
         List<Tag> tags = tagService.findTagListByPost(post);
         List<String> tagList = tags.stream()
                 .map(Tag::getTagName)
                 .collect(Collectors.toList());
+
+        boolean myBookmark = checkBookmarkedByUser(user, post);
 
         return new PostItem(
                 post.getId(),
@@ -110,7 +112,12 @@ public class BookmarkService {
                 tagList,
                 post.getThumbnail(),
                 (long) post.getComments().size(),
-                (long) post.getBookmarks().size()
+                (long) post.getBookmarks().size(),
+                myBookmark
         );
+    }
+
+    private boolean checkBookmarkedByUser(User user, Post post) {
+        return bookmarkRepository.existsByUserAndPost(user, post);
     }
 }
