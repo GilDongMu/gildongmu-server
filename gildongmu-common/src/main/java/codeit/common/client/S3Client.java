@@ -38,9 +38,9 @@ public class S3Client {
         //String uuid = UUID.randomUUID().toString().substring(0, 10);
         //String newFileName = uuid + "_" + originalFileName.replaceAll("\\s", "_");
 
-        String uploadImageUrl = putS3(image, fileName, metadata);
+        putS3(image, fileName, metadata);
 
-        return uploadImageUrl;
+        return fileName;
     }
 
     private File convert(MultipartFile image, String newFileName) throws IOException {
