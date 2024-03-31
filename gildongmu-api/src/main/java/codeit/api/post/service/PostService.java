@@ -55,7 +55,6 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final ImageRepository imageRepository;
     private final RoomRepository roomRepository;
     private final BookmarkRepository bookmarkRepository;
     private final TagService tagService;
@@ -63,16 +62,8 @@ public class PostService {
     private final ParticipantService participantService;
     private final S3Client s3Client;
 
-    public PostListResponse findPosts(String postFilter, Pageable pageable, UserPrincipal auth) {
-        Specification<Post> specification = getFilter(postFilter);
-
-        Page<Post> postPage;
-
-        if (specification != null) {
-            postPage = postRepository.findAll(specification, pageable);
-        } else {
-            postPage = postRepository.findAll(pageable);
-        }
+    public PostListResponse findPosts(String postFilter, String postSort, Pageable pageable, UserPrincipal auth) {
+        Page<Post> postPage = postRepository.findFilteredAndSortedPosts(postFilter, postSort, pageable);
 
         User user = Optional.ofNullable(auth)
             .map(UserPrincipal::getUser)
