@@ -66,6 +66,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/search/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
                 )
