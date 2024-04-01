@@ -1,5 +1,6 @@
 package codeit.api.room.controller;
 
+import codeit.api.participant.dto.response.ParticipantResponse;
 import codeit.api.room.dto.response.ChatGroupByDateResponse;
 import codeit.api.room.dto.response.ChatResponse;
 import codeit.api.room.dto.response.RoomInfoResponse;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -49,5 +52,14 @@ public class RoomController {
     private ResponseEntity<RoomInfoResponse> retrieveRoom(@PathVariable Long roomId,
                                                           @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(roomService.retrieveRoom(principal.getUser(), roomId));
+    }
+
+    @Operation(summary = "참여자 목록 조회")
+    @ApiResponse
+    @GetMapping("/{roomId}/participants")
+    public ResponseEntity<List<ParticipantResponse>> retrieveParticipants(
+            @PathVariable Long roomId,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(roomService.retrieveParticipantsByRoomId(roomId, principal.getUser()));
     }
 }
