@@ -50,7 +50,7 @@ public class PostController {
         Pageable pageableWithoutSort = PageRequest.of(
             pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
 
-        PostListResponse posts = postService.findPosts(postFilter, postSort, pageableWithoutSort, auth);
+        PostListResponse posts = postService.findPosts(null, postFilter, postSort, pageableWithoutSort, auth);
         return ResponseEntity.ok(posts);
     }
 

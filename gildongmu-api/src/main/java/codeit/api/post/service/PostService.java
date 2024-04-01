@@ -62,8 +62,8 @@ public class PostService {
     private final ParticipantService participantService;
     private final S3Client s3Client;
 
-    public PostListResponse findPosts(String postFilter, String postSort, Pageable pageable, UserPrincipal auth) {
-        Page<Post> postPage = postRepository.findFilteredAndSortedPosts(postFilter, postSort, pageable);
+    public PostListResponse findPosts(String keyword, String postFilter, String postSort, Pageable pageable, UserPrincipal auth) {
+        Page<Post> postPage = postRepository.findFilteredAndSortedPosts(keyword, postFilter, postSort, pageable);
 
         User user = Optional.ofNullable(auth)
             .map(UserPrincipal::getUser)
