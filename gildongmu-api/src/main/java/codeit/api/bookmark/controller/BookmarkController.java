@@ -1,5 +1,6 @@
 package codeit.api.bookmark.controller;
 
+import codeit.api.bookmark.dto.response.BookmarkListResponse;
 import codeit.api.bookmark.service.BookmarkService;
 import codeit.api.post.dto.PostItem;
 import codeit.api.security.UserPrincipal;
@@ -46,7 +47,7 @@ public class BookmarkController {
     @Operation(summary = "찜 목록")
     @ApiResponse
     @GetMapping("/bookmarks")
-    public ResponseEntity<List<PostItem>> getBookmarks(
+    public ResponseEntity<List<BookmarkListResponse>> getBookmarks(
             @AuthenticationPrincipal UserPrincipal auth) {
         return ResponseEntity.ok(bookmarkService.findBookmarks(auth.getUsername()));
     }

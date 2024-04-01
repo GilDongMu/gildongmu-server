@@ -1,5 +1,6 @@
 package codeit.api.bookmark.service;
 
+import codeit.api.bookmark.dto.response.BookmarkListResponse;
 import codeit.api.bookmark.exception.BookmarkException;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.TripDate;
@@ -57,16 +58,18 @@ public class BookmarkService {
         postRepository.save(post);
     }
 
-    public List<PostItem> findBookmarks(String email) {
+    public List<BookmarkListResponse> findBookmarks(String email) {
         User user = getUserByEmail(email);
 
         List<Bookmark> bookmarks = bookmarkRepository.findByUser(user);
 
         return bookmarks.stream()
                 .map(Bookmark::getPost)
-                .map(post -> mapToPostListItem(post, user))
+                .map(post -> {
+                    boolean myPost = post.getUser().equals(user);
+                    return BookmarkListResponse.from(mapToPostListItem(post, user), myPost);
+                })
                 .collect(Collectors.toList());
-
     }
 
     private User getUserByEmail(String email) {
