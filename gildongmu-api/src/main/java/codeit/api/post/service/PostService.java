@@ -120,48 +120,6 @@ public class PostService {
         return bookmarkRepository.existsByUserAndPost(user, post);
     }
 
-    public Sort getSort(String postSort) {
-        switch (postSort) {
-            case "popular":
-                return Sort.by(Direction.DESC, "countOfBookmarks");
-
-            case "comment":
-                return Sort.by(Direction.DESC, "countOfComments");
-
-            case "latest-trip":
-                return Sort.by(Direction.DESC, "startDate");
-
-            default:
-                return Sort.by(Direction.DESC, "updatedAt");
-        }
-    }
-
-    private Specification<Post> getFilter(String postFilter) {
-        Specification<Post> specification = Specification.where(null);
-        if (postFilter != null && !postFilter.isEmpty()) {
-            switch (postFilter) {
-                case "female":
-                    specification = specification.and((root, query, builder) -> builder.equal(root.get("memberGender"), "FEMALE"));
-                    break;
-                case "male":
-                    specification = specification.and((root, query, builder) -> builder.equal(root.get("memberGender"), "MALE"));
-                    break;
-                case "none":
-                    specification = specification.and((root, query, builder) -> builder.equal(root.get("memberGender"), "NONE"));
-                    break;
-                case "open":
-                    specification = specification.and((root, query, builder) -> builder.equal(root.get("status"), "OPEN"));
-                    break;
-                case "close":
-                    specification = specification.and((root, query, builder) -> builder.equal(root.get("status"), "CLOSE"));
-                    break;
-
-            }
-            return specification;
-        }
-        return null;
-    }
-
     public PostResponse findPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
