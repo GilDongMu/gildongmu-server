@@ -32,7 +32,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     @Query("select p from Post p "
         + "left join p.bookmarks b "
         + "left join p.comments c "
-        + "where (:filter is null "
+        + "where (:keyword is null or p.destination like %:keyword%) "
+        + "and (:filter is null "
         + "or (:filter = 'female' and p.memberGender = 'FEMALE') "
         + "or (:filter = 'male' and p.memberGender = 'MALE') "
         + "or (:filter = 'none' and p.memberGender = 'NONE') "
@@ -45,6 +46,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
         + "when 'comment' then count(c.id) "
         + "when 'latest' then p.updatedAt end desc, "
         + "case :sortby when 'trip' then abs(datediff(current_date(), p.startDate)) end asc")
-        Page<Post> findFilteredAndSortedPosts(@Param("filter") String filter,
+    Page<Post> findFilteredAndSortedPosts(
+        @Param("keyword") String keyword, @Param("filter") String filter,
         @Param("sortby") String sort, Pageable pageable);
 }
