@@ -6,6 +6,7 @@ import codeit.domain.post.entity.Post;
 import codeit.domain.user.entity.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +26,9 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     List<Participant> findByPostIdAndStatus(Long postId, Status status);
     @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Participant> findByPostIdAndStatusOrPostIdAndUser(Long postId, Status status, Long postId2, User user);
+
+    @Query("select pa from Participant pa inner join pa.post p " +
+            "left join Room r on r.post.id = pa.post.id " +
+            "where r.id = ?1 and pa.status = 'ACCEPTED'")
+    List<Participant> findAcceptedParticipantsByRoomId(Long roomId);
 }
