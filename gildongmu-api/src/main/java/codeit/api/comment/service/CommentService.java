@@ -119,6 +119,7 @@ public class CommentService {
         return new CommentListResponse(
             comment.getId(),
             comment.getUser().getNickname(),
+            comment.getUser().getProfilePath(),
             comment.getContent(),
             comment.isSecret(),
             isOwner,
