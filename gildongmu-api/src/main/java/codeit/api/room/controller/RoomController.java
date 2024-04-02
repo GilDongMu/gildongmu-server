@@ -2,7 +2,6 @@ package codeit.api.room.controller;
 
 import codeit.api.participant.dto.response.ParticipantResponse;
 import codeit.api.room.dto.response.ChatGroupByDateResponse;
-import codeit.api.room.dto.response.ChatResponse;
 import codeit.api.room.dto.response.RoomInfoResponse;
 import codeit.api.room.dto.response.RoomResponse;
 import codeit.api.room.service.RoomService;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rooms")
@@ -34,7 +31,7 @@ public class RoomController {
     @ApiResponse
     @GetMapping("/{roomId}/chats")
     private ResponseEntity<Slice<ChatGroupByDateResponse>> retrieveChats(
-            @PathVariable Long roomId, @PageableDefault(page = 0, size = 10, sort = "created_at", direction = DESC) Pageable pageable, @AuthenticationPrincipal UserPrincipal principal) {
+            @PathVariable Long roomId, @PageableDefault(page = 0, size = 10) Pageable pageable, @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(roomService.retrieveChats(principal.getUser(), roomId, pageable));
     }
 

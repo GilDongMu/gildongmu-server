@@ -9,6 +9,6 @@ import java.util.List;
 
 
 public interface ChatMongoRepository extends MongoRepository<Chat, String> {
-    Slice<Chat> findByRoomId(Long roomId, Pageable pageable);
+    Slice<Chat> findByRoomIdOrderByCreatedAtDesc(Long roomId, Pageable pageable);
     List<Chat> findBySenderUserId(Long userId);
 }

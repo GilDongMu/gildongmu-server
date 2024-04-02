@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static codeit.domain.post.constant.Status.OPEN;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoomServiceTest {
@@ -124,7 +124,7 @@ class RoomServiceTest {
         given(roomRepository.existsParticipatedRoomById(anyLong(), anyLong()))
                 .willReturn(true);
 
-        given(chatMongoRepository.findByRoomId(anyLong(), any()))
+        given(chatMongoRepository.findByRoomIdOrderByCreatedAtDesc(anyLong(), any()))
                 .willReturn(new SliceImpl<>(
                         List.of(chatA,
                                 chatB)));
