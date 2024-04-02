@@ -33,6 +33,11 @@ public class UserService {
         return UserProfileResponse.from(user);
     }
 
+    public UserProfileResponse retrieveUsersProfile(Long userId, User user) {
+        return UserProfileResponse.from(userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)));
+    }
+
     @Transactional
     public void modifyProfile(UserProfileRequest request, MultipartFile image, User user) {
         User dbUser = userRepository.findById(user.getId())
