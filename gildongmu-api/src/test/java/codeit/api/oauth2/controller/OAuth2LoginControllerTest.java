@@ -102,4 +102,20 @@ class OAuth2LoginControllerTest {
         //then
     }
 
+    @Test
+    @WithMockOAuthLoginUser(role = Role.ROLE_USER)
+    @DisplayName("OAuth2 로그인 유저의 토큰 조회 성공")
+    void issueTokenForOAuth2UserTest_success() throws Exception {
+        //given
+        given(oAuth2LoginService.issueToken(any()))
+                .willReturn(TokenResponse.of("any", "any"));
+        //when
+        mockMvc.perform(get("/oauth2/token")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
+
 }
