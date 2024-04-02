@@ -20,20 +20,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users/me")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @Operation(summary = "회원 정보 조회")
+    @Operation(summary = "나의 회원 정보 조회")
     @ApiResponse
-    @GetMapping
+    @GetMapping(value = "/me")
     private ResponseEntity<UserProfileResponse> retrieveMyProfile(@AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(userService.retrieveMyProfile(principal.getUser()));
     }
 
+    @Operation(summary = "다른 회원의 정보 조회")
+    @ApiResponse
+    @GetMapping(value = "/{userId}")
+    private ResponseEntity<UserProfileResponse> retrieveMyProfile(@PathVariable Long userId,
+                                                                  @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(userService.retrieveUsersProfile(userId, principal.getUser()));
+    }
+
+
     @Operation(summary = "비밀번호 검증")
     @ApiResponse
-    @PostMapping("/check-password")
+    @PostMapping("/me/check-password")
     private ResponseEntity<PasswordCheckResponse> checkMyPassword(@Valid @RequestBody PasswordCheckRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(userService.checkMyPassword(request, principal.getUser()));
     }
@@ -41,7 +50,7 @@ public class UserController {
     @Operation(summary = "회원 정보 수정")
     @ApiResponse
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(encoding = @Encoding(name = "request", contentType = "application/json")))
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<Void> modifyProfile(@Valid @RequestPart UserProfileRequest request,
                                                @RequestPart(required = false) MultipartFile image,
                                                @AuthenticationPrincipal UserPrincipal principal) {

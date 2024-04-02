@@ -56,14 +56,14 @@ class UserServiceTest {
             .password("encoded")
             .build();
 
-    static User user;
+    static User user = mock(User.class);
 
     MultipartFile profile = new MockMultipartFile("images", "image.jpg",
             MediaType.IMAGE_JPEG_VALUE, "abcde".getBytes());
 
     @BeforeAll
     static void init() {
-        user = mock(User.class);
+        given(user.getId()).willReturn(1L);
     }
 
     @Test
@@ -78,6 +78,35 @@ class UserServiceTest {
         assertEquals("userA@google.com", response.email());
         assertEquals("/profile-path", response.profilePath());
         assertEquals("안녕하세요", response.bio());
+    }
+
+    @Test
+    @DisplayName("다른 회원 정보 조회 성공")
+    void retrieveUsersProfileTest_success() {
+        //given
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(userA));
+        //when
+        UserProfileResponse response = userService.retrieveUsersProfile(1L, userA);
+        //then
+        assertEquals(2, response.favoriteSpots().size());
+        assertEquals("a", response.nickname());
+        assertEquals("userA@google.com", response.email());
+        assertEquals("/profile-path", response.profilePath());
+        assertEquals("안녕하세요", response.bio());
+    }
+
+    @Test
+    @DisplayName("다른 회원 정보 조회 실패")
+    void retrieveUsersProfileTest_fail_USER_NOT_FOUND() {
+        //given
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+        //when
+        UserException e = assertThrows(UserException.class,
+                () -> userService.retrieveUsersProfile(1L, user));
+        //then
+        assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
     @Test

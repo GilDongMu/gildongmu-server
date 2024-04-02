@@ -87,11 +87,24 @@ class UserControllerTest {
 
     @Test
     @WithMockCustomUser(role = Role.ROLE_USER)
-    @DisplayName("회원 정보 조회 성공")
+    @DisplayName("나의 회원 정보 조회 성공")
     void retrieveMyProfileTest_success() throws Exception {
         //given
         //when
         mockMvc.perform(get("/users/me")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @WithMockCustomUser(role = Role.ROLE_USER)
+    @DisplayName("회원 정보 조회 성공")
+    void retrieveUsersProfileTest_success() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get("/users/{userId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
