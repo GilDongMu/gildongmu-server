@@ -46,7 +46,7 @@ public class RoomService {
     public Slice<ChatGroupByDateResponse> retrieveChats(User user, Long roomId, Pageable pageable) {
         validateRetrieveRoom(roomId, user.getId());
 
-        return getGroupingChatSlices(chatMongoRepository.findByRoomId(roomId, pageable), user.getId());
+        return getGroupingChatSlices(chatMongoRepository.findByRoomIdOrderByCreatedAtDesc(roomId, pageable), user.getId());
     }
 
     public Slice<ChatGroupByDateResponse> getGroupingChatSlices(Slice<Chat> chatSlice, Long userId) {
