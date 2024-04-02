@@ -44,4 +44,12 @@ public class OAuth2LoginController {
                 .header(HttpHeaders.SET_COOKIE, response.generateCookie())
                 .body(response);
     }
+
+    @GetMapping("/token")
+    private ResponseEntity<TokenResponse> issueTokenForOAuth2User(@AuthenticationPrincipal OAuth2LoginUser oAuth2LoginUser) {
+        TokenResponse response = oAuth2LoginService.issueToken(oAuth2LoginUser);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, response.generateCookie())
+                .body(response);
+    }
 }
