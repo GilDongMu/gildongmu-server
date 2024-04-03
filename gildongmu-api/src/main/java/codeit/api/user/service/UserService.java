@@ -6,6 +6,7 @@ import codeit.api.user.dto.request.UserProfileRequest;
 import codeit.api.user.dto.response.PasswordCheckResponse;
 import codeit.api.user.dto.response.UserProfileResponse;
 import codeit.api.user.exception.UserException;
+import codeit.api.user.transfer.UserProfileUpdatedEvent;
 import codeit.common.client.S3Client;
 import codeit.domain.chat.repository.ChatMongoRepository;
 import codeit.domain.user.entity.User;
@@ -13,12 +14,12 @@ import codeit.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,6 +29,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final S3Client s3Client;
     private final ChatMongoRepository chatMongoRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public UserProfileResponse retrieveMyProfile(User user) {
         return UserProfileResponse.from(user);
@@ -46,8 +48,8 @@ public class UserService {
         updatePasswordIfNeeded(request.getIsPasswordChanged(), request.getPassword(), dbUser);
         updateProfileImageIfNeeded(Optional.ofNullable(image), dbUser);
 
-        chatMongoRepository.saveAll(chatMongoRepository.findBySenderUserId(user.getId())
-                .stream().map(chat -> chat.updateChatUserProfile(user)).collect(Collectors.toList()));
+        applicationEventPublisher.publishEvent(new UserProfileUpdatedEvent(user.getId()));
+
     }
 
     public void updatePasswordIfNeeded(Boolean isPasswordChanged, Optional<String> maybePassword, User dbUser) {

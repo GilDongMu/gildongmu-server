@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
@@ -24,11 +25,18 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             "order by abs(function('DATEDIFF', p.startDate, current_date)) ")
     Slice<Room> findParticipatedRoomByUserId(Long userId, Pageable pageable);
 
+
+    @Query("select r.id from Room r left join r.post p " +
+            "left join Participant pa on p.id = pa.post.id " +
+            "where pa.user.id = ?1 ")
+    Set<Long> findAllParticipatedRoomIdsByUserId(Long userId);
+
     @EntityGraph(attributePaths = {"post"}, type = EntityGraph.EntityGraphType.FETCH)
     @Query("select r from Room r left join fetch r.post p " +
             "left join Participant pa on p.id = pa.post.id " +
             "where r.id = ?1 and pa.user.id = ?2 ")
     Optional<Room> findParticipatedRoomById(Long id, Long userId);
+
 
     @Query("select case when exists " +
             "(select 1 from Room r left join r.post p " +

@@ -1,6 +1,7 @@
 package codeit.common.config;
 
 import codeit.common.dto.transfer.ChatDto;
+import codeit.common.dto.transfer.ChatUserProfileDto;
 import codeit.common.dto.transfer.InfoChatDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -52,6 +53,7 @@ public class KafkaConsumerConfig {
         Map<String, Class<?>> mapping = new HashMap<>();
         mapping.put("chatDto", ChatDto.class);
         mapping.put("infoChatDto", InfoChatDto.class);
+        mapping.put("chatUserProfileDto", ChatUserProfileDto.class);
         typeMapper.setIdClassMapping(mapping);
         converter.setTypeMapper(typeMapper);
         return converter;

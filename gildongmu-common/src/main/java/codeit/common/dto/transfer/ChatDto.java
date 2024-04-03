@@ -5,6 +5,8 @@ import codeit.domain.chat.entity.Chat;
 import codeit.domain.chat.entity.ChatUser;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -13,6 +15,7 @@ import lombok.*;
 public class ChatDto {
     private String chatId;
     private String content;
+    private LocalDateTime createdAt;
     private ChatType type;
     private Long roomId;
     private Sender sender;
@@ -21,6 +24,7 @@ public class ChatDto {
         return ChatDto.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
+                .createdAt(chat.getCreatedAt())
                 .type(chat.getType())
                 .sender(Sender.from(chat.getSender()))
                 .roomId(chat.getRoomId()).build();
