@@ -1,6 +1,8 @@
 package codeit.api.user.dto.response;
 
+import codeit.domain.user.constant.Gender;
 import codeit.domain.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 
 import java.util.List;
@@ -14,6 +16,7 @@ public record UserProfileResponse(
         String nickname,
         String profilePath,
         String bio,
+        @JsonInclude(JsonInclude.Include.NON_NULL) Gender gender,
         List<String> favoriteSpots,
         boolean isCurrentUser
 ) {
@@ -32,6 +35,7 @@ public record UserProfileResponse(
         return UserProfileResponse.builder()
                 .email(user.getEmail())
                 .nickname(user.getNickname())
+                .gender(user.getGender())
                 .id(user.getId())
                 .bio(user.getBio())
                 .profilePath(user.getProfilePath())
