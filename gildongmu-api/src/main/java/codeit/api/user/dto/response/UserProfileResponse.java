@@ -18,7 +18,7 @@ public record UserProfileResponse(
         String bio,
         @JsonInclude(JsonInclude.Include.NON_NULL) Gender gender,
         List<String> favoriteSpots,
-        boolean isCurrentUser
+        @JsonInclude(JsonInclude.Include.NON_NULL) Boolean isCurrentUser
 ) {
     public static UserProfileResponse from(User user) {
         return UserProfileResponse.builder()
