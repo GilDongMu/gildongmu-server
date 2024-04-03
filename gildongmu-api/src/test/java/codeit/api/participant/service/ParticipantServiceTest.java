@@ -176,7 +176,39 @@ class ParticipantServiceTest {
         //when
         participantService.denyParticipant(1L, 1L, userA);
         //then
+        verify(roomRepository, times(0)).findByPostId(anyLong());
         assertEquals(participantToBeDeleted.getStatus(), Status.DELETED);
+    }
+
+    @Test
+    @DisplayName("신청자 거절 및 추방 성공")
+    void denyParticipantTest_success_WhenAcceptedParticipantIsDenied() {
+        //given
+        given(participantRepository.findByUserIdAndPostId(anyLong(), anyLong()))
+                .willReturn(Optional.of(Participant.builder()
+                        .user(userA)
+                        .status(Status.ACCEPTED)
+                        .isLeader(true)
+                        .post(post)
+                        .build()));
+        Participant participantToBeDeleted = Participant.builder()
+                .user(userB)
+                .status(Status.ACCEPTED)
+                .isLeader(false)
+                .post(post)
+                .build();
+        given(participantRepository.findById(anyLong()))
+                .willReturn(Optional.of(participantToBeDeleted));
+        Room room = Room.builder()
+                .headcount(2)
+                .build();
+        given(roomRepository.findByPostId(anyLong()))
+                .willReturn(Optional.of(room));
+        //when
+        participantService.denyParticipant(1L, 1L, userA);
+        //then
+        assertEquals(participantToBeDeleted.getStatus(), Status.DELETED);
+        assertEquals(room.getHeadcount(), 1);
     }
 
     @Test

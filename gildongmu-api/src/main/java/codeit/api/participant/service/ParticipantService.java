@@ -51,13 +51,11 @@ public class ParticipantService {
     public void exitParticipant(Long postId, User user) {
         Participant participant = participantRepository.findByUserIdAndPostIdAndStatusIsNot(user.getId(), postId, Status.DELETED)
                 .orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
-        Status participantBeforeExit = participant.getStatus();
+
+        if(Status.ACCEPTED.equals(participant.getStatus()))
+            roomRepository.findByPostId(postId)
+                    .ifPresent(Room::minusHeadCount);
         participant.delete();
-        roomRepository.findByPostId(postId)
-                .ifPresent(room -> {
-                    if (Status.ACCEPTED.equals(participantBeforeExit))
-                        room.minusHeadCount();
-                });
     }
 
     public void saveLeader(Post post, User user) {
@@ -77,7 +75,11 @@ public class ParticipantService {
                 .stream().filter(participant -> Objects.equals(participant.getPost().getId(), postId))
                 .findFirst().orElseThrow(() -> new ParticipantException(ErrorCode.PARTICIPANT_NOT_FOUND));
 
+        if(Status.ACCEPTED.equals(participantToBeDeleted.getStatus()))
+            roomRepository.findByPostId(postId)
+                    .ifPresent(Room::minusHeadCount);
         participantToBeDeleted.delete();
+
     }
 
     @Transactional
