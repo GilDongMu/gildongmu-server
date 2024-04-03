@@ -1,4 +1,4 @@
-package codeit.chat.controller.dto.response;
+package codeit.chat.handler.dto.response;
 
 import codeit.common.dto.transfer.ChatDto;
 import codeit.common.dto.transfer.InfoChatDto;
@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -16,6 +17,8 @@ public class ChatResponse implements Serializable {
     private String id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ChatUserResponse sender;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDateTime createdAt;
     private String content;
     private ChatType type;
 
@@ -23,6 +26,7 @@ public class ChatResponse implements Serializable {
         return ChatResponse.builder()
                 .id(dto.getChatId())
                 .content(dto.getContent())
+                .createdAt(dto.getCreatedAt())
                 .type(dto.getType())
                 .sender(ChatUserResponse.from(dto.getSender()))
                 .build();

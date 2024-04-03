@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +42,8 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private ChatMongoRepository chatMongoRepository;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
     @Mock
     private S3Client s3Client;
     @InjectMocks
