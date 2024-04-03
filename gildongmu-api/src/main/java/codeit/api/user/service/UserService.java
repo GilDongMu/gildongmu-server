@@ -35,7 +35,7 @@ public class UserService {
 
     public UserProfileResponse retrieveUsersProfile(Long userId, User user) {
         return UserProfileResponse.from(userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)));
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND)), user.getId());
     }
 
     @Transactional
