@@ -3,6 +3,7 @@ package codeit.domain.post.repository;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
 import codeit.domain.user.entity.User;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     Slice<Post> findByParticipantUserOrderByStatusDesc(Long userId, Pageable pageable);
 
     Optional<Post> findByIdAndStatus(Long postId, Status status);
+
+    @Query("select p from Post p where p.startDate < :today and p.status = :status")
+    List<Post> findAllByStartDateBeforeAndStatus(@Param("today")LocalDate today, @Param("status") Status status);
 
     @Query("select p from Post p "
         + "left join p.bookmarks b "
