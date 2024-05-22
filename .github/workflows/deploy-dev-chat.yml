@@ -1,7 +1,7 @@
 name: deployment chat on develop server
-on:
-  push:
-    branches:
+#on:
+#  push:
+#    branches:
 #      - develop
 jobs:
   build-and-push-image:
