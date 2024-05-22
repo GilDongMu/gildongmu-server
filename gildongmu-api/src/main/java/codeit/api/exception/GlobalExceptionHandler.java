@@ -3,6 +3,7 @@ package codeit.api.exception;
 import codeit.api.auth.exception.AuthException;
 import codeit.api.bookmark.exception.BookmarkException;
 import codeit.api.comment.exception.CommentException;
+import codeit.api.history.exception.HistoryException;
 import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.participant.exception.ParticipantException;
@@ -30,8 +31,15 @@ import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 public class GlobalExceptionHandler {
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
 
+    @ExceptionHandler(HistoryException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleHistoryException(ParticipantException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ExceptionResponse<List<String>>> handleUserException(ConstraintViolationException e) {
+    public ResponseEntity<ExceptionResponse<List<String>>> handleConstraintViolationException(ConstraintViolationException e) {
         List<String> messages = e.getConstraintViolations()
                 .stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), REQUEST_ARGUMENT_NOT_VALID, REQUEST_ARGUMENT_NOT_VALID.getMessage());

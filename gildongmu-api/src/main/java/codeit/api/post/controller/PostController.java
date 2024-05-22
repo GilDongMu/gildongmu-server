@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,8 +59,10 @@ public class PostController {
     @GetMapping("/{postId}")
     @ApiResponse
     @Operation(summary = "동행 단일 글 조회")
-    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") Long postId) {
-        return ResponseEntity.ok(postService.findPost(postId));
+    public ResponseEntity<PostResponse> getPost(
+            @AuthenticationPrincipal UserPrincipal auth,
+            @PathVariable("postId") Long postId) {
+        return ResponseEntity.ok(postService.findPost(postId, Optional.ofNullable(auth)));
     }
 
     @Operation(summary = "동행 글 생성")
