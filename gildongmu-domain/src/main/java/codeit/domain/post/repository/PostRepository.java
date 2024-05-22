@@ -53,4 +53,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     Page<Post> findFilteredAndSortedPosts(
         @Param("keyword") String keyword, @Param("filter") String filter,
         @Param("sortby") String sort, Pageable pageable);
+
+
+    @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.FETCH)
+    List<Post> findByIdIn(List<Long> postId);
 }

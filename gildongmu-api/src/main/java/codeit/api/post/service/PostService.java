@@ -4,6 +4,7 @@ import codeit.api.bookmark.service.BookmarkService;
 import codeit.api.participant.service.ParticipantService;
 import codeit.api.post.dto.PostItem;
 import codeit.api.post.dto.TripDate;
+import codeit.api.post.dto.event.PostHitEvent;
 import codeit.api.post.dto.request.ImageCreateRequest;
 import codeit.api.post.dto.request.PostCreateRequest;
 import codeit.api.post.dto.request.PostUpdateRequest;
@@ -18,6 +19,7 @@ import codeit.domain.Image.Repository.ImageRepository;
 import codeit.domain.Image.entity.Image;
 import codeit.domain.bookmark.entity.Bookmark;
 import codeit.domain.bookmark.repository.BookmarkRepository;
+import codeit.domain.history.entity.History;
 import codeit.domain.post.constant.MemberGender;
 import codeit.domain.post.constant.Status;
 import codeit.domain.post.entity.Post;
@@ -32,6 +34,7 @@ import java.net.URL;
 import java.util.Optional;
 import javax.swing.text.html.Option;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -61,6 +64,7 @@ public class PostService {
     private final ImageService imageService;
     private final ParticipantService participantService;
     private final S3Client s3Client;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public PostListResponse findPosts(String keyword, String postFilter, String postSort, Pageable pageable, UserPrincipal auth) {
         Page<Post> postPage = postRepository.findFilteredAndSortedPosts(keyword, postFilter, postSort, pageable);
@@ -118,6 +122,17 @@ public class PostService {
 
     private boolean checkBookmarkedByUser(User user, Post post) {
         return bookmarkRepository.existsByUserAndPost(user, post);
+    }
+
+    public PostResponse findPost(Long postId, Optional<UserPrincipal> optionalUserPrincipal) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+        List<Tag> tag = tagService.findTagListByPost(post);
+
+        optionalUserPrincipal.ifPresent(principal -> applicationEventPublisher.publishEvent(PostHitEvent.of(principal.getUser().getId(), postId)));
+
+        return PostResponse.from(post, tag, post.getImages());
     }
 
     public PostResponse findPost(Long postId) {
@@ -227,6 +242,12 @@ public class PostService {
                 .map(Room::getHeadcount)
                 .orElseGet(() -> 1);
         return PostSummaryResponse.from(post, numberOfAccepted, user.getId());
+    }
+
+    public List<PostItem> retrievePostsByPostId(User user, List<Long> postIds){
+        return postRepository.findByIdIn(postIds)
+                .stream().map(p -> mapToPostListItem(p, user))
+                .collect(Collectors.toList());
     }
 
 }

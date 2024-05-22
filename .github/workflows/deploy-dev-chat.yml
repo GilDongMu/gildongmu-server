@@ -2,7 +2,7 @@ name: deployment chat on develop server
 on:
   push:
     branches:
-      - develop
+#      - develop
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
