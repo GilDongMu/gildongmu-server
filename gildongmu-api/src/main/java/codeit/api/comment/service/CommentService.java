@@ -120,6 +120,7 @@ public class CommentService {
             comment.getId(),
             comment.getUser().getNickname(),
             comment.getUser().getProfilePath(),
+            comment.getUser().isMalicious(),
             comment.getContent(),
             comment.isSecret(),
             isOwner,

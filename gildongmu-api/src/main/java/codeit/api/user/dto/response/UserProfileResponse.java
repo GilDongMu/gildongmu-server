@@ -16,6 +16,7 @@ public record UserProfileResponse(
         String nickname,
         String profilePath,
         String bio,
+        boolean isMalicious,
         @JsonInclude(JsonInclude.Include.NON_NULL) Gender gender,
         List<String> favoriteSpots,
         @JsonInclude(JsonInclude.Include.NON_NULL) Boolean isCurrentUser
@@ -28,6 +29,7 @@ public record UserProfileResponse(
                 .bio(user.getBio())
                 .profilePath(user.getProfilePath())
                 .favoriteSpots(user.getFavoriteSpots())
+                .isMalicious(user.isMalicious())
                 .build();
     }
 
@@ -41,6 +43,7 @@ public record UserProfileResponse(
                 .profilePath(user.getProfilePath())
                 .favoriteSpots(user.getFavoriteSpots())
                 .isCurrentUser(Objects.equals(user.getId(), userId))
+                .isMalicious(user.isMalicious())
                 .build();
     }
 }

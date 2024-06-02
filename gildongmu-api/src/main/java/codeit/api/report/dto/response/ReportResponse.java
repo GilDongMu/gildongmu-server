@@ -14,7 +14,7 @@ public record ReportResponse(
         LocalDateTime lastReportedAt
 ) {
 
-    public static ReportResponse from(Report report, List<String> reasons, LocalDateTime lastReportedAt){
+    public static ReportResponse of(Report report, List<String> reasons, LocalDateTime lastReportedAt){
         return ReportResponse.builder()
                 .countOfReports(reasons.size())
                 .lastReportedAt(lastReportedAt)

@@ -43,7 +43,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://gildongmu.vercel.app"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://gildongmu.vercel.app", "http://34.228.244.93:3000"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -67,6 +67,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/search/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/reports/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
                 )

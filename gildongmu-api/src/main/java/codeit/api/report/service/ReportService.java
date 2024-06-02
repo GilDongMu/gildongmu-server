@@ -12,6 +12,7 @@ import codeit.domain.user.entity.User;
 import codeit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
@@ -43,27 +44,29 @@ public class ReportService {
             target.classifyMaliciousUser();
     }
 
-    public Slice<ReportResponse> retrieveReports() {
-        Slice<Report> reportSlice = reportRepository.findByOrderByTargetId(PageRequest.of(1, 2));
-        List<Report> reports = reportSlice.getContent();
-        if (reports.isEmpty())
-            return new SliceImpl<>(new ArrayList<>(), reportSlice.getPageable(), reportSlice.hasNext());
+    public Slice<ReportResponse> retrieveReports(Pageable pageable) {
+        Slice<Report> reportSlice = reportRepository.findByOrderByCreatedAtDescTargetId(pageable);
+        List<ReportResponse> contents = getSortedGroupByTargetUserReportResponse(reportSlice.getContent());
+        return new SliceImpl<>(contents, reportSlice.getPageable(), reportSlice.hasNext());
+    }
 
-        Report previousReport = reports.get(0);
+    private List<ReportResponse> getSortedGroupByTargetUserReportResponse(List<Report> reports){
+        if (reports.isEmpty()) return new ArrayList<>();
+
         List<ReportResponse> contents = new ArrayList<>();
+
+        Report prev = reports.get(0);
         List<String> reasons = new ArrayList<>();
-        LocalDateTime lastReportedAt = LocalDateTime.MIN;
-        for (Report r : reports) {
-            if (!Objects.equals(previousReport.getTarget().getId(), r.getTarget().getId())) {
-                contents.add(ReportResponse.from(previousReport, reasons, lastReportedAt));
+        LocalDateTime lastReportedAt = prev.getCreatedAt();
+        for (Report r: reports ){
+            if(!Objects.equals(prev.getTarget().getId(), r.getTarget().getId())){
+                contents.add(ReportResponse.of(prev, reasons, lastReportedAt));
                 reasons = new ArrayList<>();
-                previousReport = r;
-                lastReportedAt = LocalDateTime.MIN;
-            }
-            if (r.getCreatedAt().isAfter(lastReportedAt))
+                prev = r;
                 lastReportedAt = r.getCreatedAt();
+            }
             reasons.add(r.getReason());
         }
-        return new SliceImpl<>(contents, reportSlice.getPageable(), reportSlice.hasNext());
+        return contents;
     }
 }

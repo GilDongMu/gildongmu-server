@@ -6,6 +6,7 @@ public record PostItem(
         Long id,
         String title,
         String nickname,
+        boolean isMaliciousUser,
         String destination,
         TripDate tripDate,
         Short numberOfPeople,

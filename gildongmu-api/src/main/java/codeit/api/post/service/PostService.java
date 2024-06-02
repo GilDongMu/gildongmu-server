@@ -106,6 +106,7 @@ public class PostService {
                 post.getId(),
                 post.getTitle(),
                 post.getUser().getNickname(),
+                post.getUser().isMalicious(),
                 post.getDestination(),
                 TripDate.of(post.getStartDate(), post.getEndDate()),
                 post.getParticipants(),
