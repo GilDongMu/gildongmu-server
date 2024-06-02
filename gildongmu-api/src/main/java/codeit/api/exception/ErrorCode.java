@@ -32,6 +32,8 @@ public enum ErrorCode {
     PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 참여자가 없습니다."),
     NOT_LEADER_USER(HttpStatus.UNAUTHORIZED, "해당 글 리더 유저가 아닙니다."),
     NOT_PARTICIPANT_USER(HttpStatus.UNAUTHORIZED, "해당 글 참여 유저가 아닙니다."),
+    //report
+    ALREADY_REPORTED_USER(HttpStatus.BAD_REQUEST, "이미 참여 신고한 유저입니다."),
     ;
     private final HttpStatus httpStatus;
     private final String message;
