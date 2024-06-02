@@ -52,6 +52,9 @@ public class User extends BaseTimeEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private List<String> favoriteSpots = new ArrayList<>();
 
+    @Column(columnDefinition = "bit(1) default 0")
+    private boolean isMalicious;
+
     public void registerOAuth2User(String nickname, Gender gender, LocalDate dateOfBirth,
                                    String bio, List<String> favoriteSpots, String profilePath) {
         this.nickname = nickname;
@@ -76,6 +79,10 @@ public class User extends BaseTimeEntity {
 
     public void updateProfilePath(String profilePath) {
         this.profilePath = profilePath;
+    }
+
+    public void classifyMaliciousUser() {
+        isMalicious = true;
     }
 
     @Builder
