@@ -3,8 +3,10 @@ package codeit.domain.report.repository;
 import codeit.domain.report.entity.Report;
 import codeit.domain.user.entity.User;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +18,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Set<Long> findComplainantIdByTargetAndDeletedAtIsNull(User target);
 
-    Slice<Report> findByOrderByTargetId(PageRequest request);
+    Slice<Report> findByOrderByCreatedAtDescTargetId(Pageable pageable);
 }

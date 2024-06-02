@@ -13,6 +13,7 @@ public record ParticipantUserResponse(
         Long id,
         String nickname,
         String profilePath,
+        boolean isMalicious,
         boolean isCurrentUser
 ) {
     public static ParticipantUserResponse from(User user, Long currentUserId) {
@@ -20,6 +21,7 @@ public record ParticipantUserResponse(
                 .nickname(user.getNickname())
                 .id(user.getId())
                 .profilePath(user.getProfilePath())
+                .isMalicious(user.isMalicious())
                 .isCurrentUser(Objects.equals(currentUserId, user.getId()))
                 .build();
     }

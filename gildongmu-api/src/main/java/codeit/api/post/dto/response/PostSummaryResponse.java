@@ -34,11 +34,13 @@ public record PostSummaryResponse(
             Long id,
             String nickname,
             String profilePath,
+            boolean isMalicious,
             boolean isCurrentUser
     ) {
         public static User from(codeit.domain.user.entity.User user, Long currentUserId) {
             return User.builder()
                     .id(user.getId())
+                    .isMalicious(user.isMalicious())
                     .nickname(user.getNickname())
                     .profilePath(user.getProfilePath())
                     .isCurrentUser(Objects.equals(user.getId(), currentUserId))

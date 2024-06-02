@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public record PostResponse(
         Long id,
         String title,
+        boolean isMaliciousUser,
         Long userId,
         String nickname,
         String profilePath,
@@ -36,6 +37,7 @@ public record PostResponse(
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
+                post.getUser().isMalicious(),
                 post.getUser().getId(),
                 post.getUser().getNickname(),
                 post.getUser().getProfilePath(),
