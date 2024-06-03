@@ -44,10 +44,8 @@ public class ReportService {
             target.classifyMaliciousUser();
     }
 
-    public Slice<ReportResponse> retrieveReports(Pageable pageable) {
-        Slice<Report> reportSlice = reportRepository.findByOrderByCreatedAtDescTargetId(pageable);
-        List<ReportResponse> contents = getSortedGroupByTargetUserReportResponse(reportSlice.getContent());
-        return new SliceImpl<>(contents, reportSlice.getPageable(), reportSlice.hasNext());
+    public List<ReportResponse> retrieveReports() {
+        return getSortedGroupByTargetUserReportResponse(reportRepository.findByDeletedAtIsNullOrderByCreatedAtDescTargetId());
     }
 
     private List<ReportResponse> getSortedGroupByTargetUserReportResponse(List<Report> reports){
