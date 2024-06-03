@@ -8,12 +8,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class ReportController {
     @Operation(summary = "신고 목록 조회")
     @ApiResponse
     @GetMapping
-    public ResponseEntity<Slice<ReportResponse>> retrieveReports(@PageableDefault(page = 0, size = 10) Pageable pageable){
-        return ResponseEntity.ok(reportService.retrieveReports(pageable));
+    public ResponseEntity<List<ReportResponse>> retrieveReports() {
+        return ResponseEntity.ok(reportService.retrieveReports());
     }
 }
