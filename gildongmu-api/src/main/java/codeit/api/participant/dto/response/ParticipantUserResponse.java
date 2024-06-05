@@ -36,10 +36,17 @@ public record ParticipantUserResponse(
     }
 
     public static ParticipantUserResponse from(User user) {
+        if (user.isDeleted()) {
+            return ParticipantUserResponse.builder()
+                    .nickname(null)
+                    .id(user.getId())
+                    .profilePath(null)
+                    .build();
+        }
         return ParticipantUserResponse.builder()
-                .nickname(null)
+                .nickname(user.getNickname())
                 .id(user.getId())
-                .profilePath(null)
+                .profilePath(user.getProfilePath())
                 .build();
     }
 }

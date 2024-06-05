@@ -97,7 +97,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(Role role, String email, String nickname, String password, Gender gender,
-                LocalDate dateOfBirth, String profilePath, String bio, List<String> favoriteSpots) {
+                LocalDate dateOfBirth, String profilePath, String bio, List<String> favoriteSpots, boolean isDeleted) {
         this.role = role;
         this.email = email;
         this.nickname = nickname;
@@ -107,5 +107,6 @@ public class User extends BaseTimeEntity {
         this.profilePath = profilePath;
         this.bio = bio;
         this.favoriteSpots = favoriteSpots;
+        this.isDeleted = isDeleted;
     }
 }
