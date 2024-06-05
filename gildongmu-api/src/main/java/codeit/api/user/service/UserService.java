@@ -69,4 +69,9 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), dbUser.getPassword()));
     }
+
+    public void deleteUser(User user){
+        user.delete();
+        userRepository.save(user);
+    }
 }

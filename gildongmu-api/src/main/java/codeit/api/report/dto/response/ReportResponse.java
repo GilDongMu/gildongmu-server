@@ -27,9 +27,18 @@ public record ReportResponse(
     public record User(
             Long id,
             String nickname,
-            String profilePath
+            String profilePath,
+            boolean isDeleted
     ) {
         public static User from(codeit.domain.user.entity.User user) {
+            if (user.isDeleted()) {
+                User.builder()
+                        .id(user.getId())
+                        .nickname(null)
+                        .profilePath(null)
+                        .isDeleted(true)
+                        .build();
+            }
             return User.builder()
                     .id(user.getId())
                     .nickname(user.getNickname())

@@ -35,6 +35,7 @@ public record PostSummaryResponse(
             String nickname,
             String profilePath,
             boolean isMalicious,
+            boolean isDeleted,
             boolean isCurrentUser
     ) {
         public static User from(codeit.domain.user.entity.User user, Long currentUserId) {
@@ -43,6 +44,7 @@ public record PostSummaryResponse(
                     .isMalicious(user.isMalicious())
                     .nickname(user.getNickname())
                     .profilePath(user.getProfilePath())
+                    .isDeleted(user.isDeleted())
                     .isCurrentUser(Objects.equals(user.getId(), currentUserId))
                     .build();
         }

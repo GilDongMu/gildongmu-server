@@ -1,22 +1,31 @@
 package codeit.api.participant.dto.response;
 
 import codeit.domain.user.entity.User;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 
 import java.util.Objects;
 
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ParticipantUserResponse(
         Long id,
         String nickname,
         String profilePath,
         boolean isMalicious,
-        boolean isCurrentUser
+        boolean isCurrentUser,
+        boolean isDeleted
 ) {
     public static ParticipantUserResponse from(User user, Long currentUserId) {
+        if (user.isDeleted()) {
+            return ParticipantUserResponse.builder()
+                    .nickname(null)
+                    .id(user.getId())
+                    .profilePath(null)
+                    .isMalicious(user.isMalicious())
+                    .isCurrentUser(Objects.equals(currentUserId, user.getId()))
+                    .isDeleted(true)
+                    .build();
+        }
         return ParticipantUserResponse.builder()
                 .nickname(user.getNickname())
                 .id(user.getId())
@@ -28,9 +37,9 @@ public record ParticipantUserResponse(
 
     public static ParticipantUserResponse from(User user) {
         return ParticipantUserResponse.builder()
-                .nickname(user.getNickname())
+                .nickname(null)
                 .id(user.getId())
-                .profilePath(user.getProfilePath())
+                .profilePath(null)
                 .build();
     }
 }

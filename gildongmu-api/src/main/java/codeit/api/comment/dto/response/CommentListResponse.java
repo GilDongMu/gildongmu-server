@@ -7,6 +7,7 @@ public record CommentListResponse(
         String nickname,
         String profilePath,
         boolean isMalicious,
+        boolean isDeleted,
         String content,
         boolean secret,
         boolean owner,
