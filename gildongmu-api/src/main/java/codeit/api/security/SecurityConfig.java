@@ -68,6 +68,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/search/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/reports/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/reports/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
                 )

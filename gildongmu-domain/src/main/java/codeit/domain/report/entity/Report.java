@@ -2,13 +2,19 @@ package codeit.domain.report.entity;
 
 import codeit.domain.common.BaseTimeEntity;
 import codeit.domain.user.entity.User;
+import codeit.domain.util.JsonConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -23,24 +29,53 @@ public class Report extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "target_id", nullable = false)
     private User target;
 
-    @Column(columnDefinition = "blob", nullable = false)
-    private String reason;
+    @Column(name = "complaints", columnDefinition = "json")
+    @Convert(converter = JsonConverter.class)
+    private List<Complaint> complaints = new ArrayList<>();
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "complainant_id", nullable = false)
-    private User complainant;
-
-    private LocalDateTime deletedAt;
+    @Transient
+    @Getter(AccessLevel.NONE)
+    private List<Complaint> validComplaints = new ArrayList<>();
 
     @Builder
-    public Report(User target, String reason, User complainant, LocalDateTime deletedAt) {
+    public Report(User target) {
         this.target = target;
-        this.reason = reason;
-        this.complainant = complainant;
-        this.deletedAt = deletedAt;
+    }
+
+    public void addComplaint(Long complainantId, String reason) {
+        complaints.add(Complaint.of(reason, complainantId));
+    }
+
+    private List<Complaint> getValidComplaints() {
+        if (validComplaints.isEmpty()) {
+            this.validComplaints = complaints.stream()
+                    .filter(complaint -> !complaint.getIsDeleted()).collect(Collectors.toList());
+        }
+        return validComplaints;
+    }
+
+    public List<String> getReasons() {
+        return getValidComplaints().stream().map(Complaint::getReason).collect(Collectors.toList());
+    }
+
+    public int getValidComplaintCount() {
+        return getValidComplaints().size();
+    }
+
+    private Set<Long> getValidComplainantIds() {
+        return getValidComplaints().stream()
+                .map(Complaint::getComplainantId).collect(Collectors.toSet());
+    }
+
+    public boolean isUserAlreadyComplaint(Long userId) {
+        return getValidComplainantIds().contains(userId);
+    }
+
+    public void deleteAllComplaint() {
+        getComplaints().forEach(Complaint::delete);
     }
 }

@@ -8,6 +8,7 @@ import codeit.api.mock.exception.MockException;
 import codeit.api.oauth2.exception.OAuth2Exception;
 import codeit.api.participant.exception.ParticipantException;
 import codeit.api.post.exception.PostException;
+import codeit.api.report.exception.ReportException;
 import codeit.api.room.exception.RoomException;
 import codeit.api.user.exception.UserException;
 import codeit.common.client.exception.S3Exception;
@@ -30,6 +31,13 @@ import static codeit.api.exception.ErrorCode.REQUEST_ARGUMENT_NOT_VALID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final String LOG_FORMAT = "Class : {}, Code : {}, Message : {}";
+
+    @ExceptionHandler(ReportException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleReportException(ReportException e) {
+        log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+    }
 
     @ExceptionHandler(HistoryException.class)
     public ResponseEntity<ExceptionResponse<String>> handleHistoryException(ParticipantException e) {
@@ -86,21 +94,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse<String>> handlePostException(PostException e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(BookmarkException.class)
     public ResponseEntity<ExceptionResponse<String>> handleBookmarkException(BookmarkException e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ExceptionResponse<String>> handleCommentException(CommentException e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -127,7 +135,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse<String>> handleS3Exception(S3Exception e) {
         log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getErrorCode(), e.getErrorCode().getMessage());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
+                .body(new ExceptionResponse<>(e.getErrorCode().name(), e.getErrorCode().getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

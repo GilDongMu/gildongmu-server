@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +35,15 @@ public class ReportController {
     @Operation(summary = "신고 목록 조회")
     @ApiResponse
     @GetMapping
-    public ResponseEntity<List<ReportResponse>> retrieveReports() {
-        return ResponseEntity.ok(reportService.retrieveReports());
+    public ResponseEntity<Slice<ReportResponse>> retrieveReports(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return ResponseEntity.ok(reportService.retrieveReports(pageable));
+    }
+
+    @Operation(summary = "불량 유저 표시 해제")
+    @ApiResponse
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> cancelMaliciousUser(@PathVariable Long userId){
+        reportService.cancelToClassifyMalicious(userId);
+        return ResponseEntity.ok().build();
     }
 }

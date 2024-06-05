@@ -8,17 +8,17 @@ import java.util.List;
 
 @Builder
 public record ReportResponse(
-        int countOfReports,
+        int countOfComplaints,
         List<String> reasons,
         User user,
         LocalDateTime lastReportedAt
 ) {
 
-    public static ReportResponse of(Report report, List<String> reasons, LocalDateTime lastReportedAt){
+    public static ReportResponse from(Report report) {
         return ReportResponse.builder()
-                .countOfReports(reasons.size())
-                .lastReportedAt(lastReportedAt)
-                .reasons(reasons)
+                .countOfComplaints(report.getValidComplaintCount())
+                .lastReportedAt(report.getUpdatedAt())
+                .reasons(report.getReasons())
                 .user(User.from(report.getTarget()))
                 .build();
     }
@@ -27,8 +27,7 @@ public record ReportResponse(
     public record User(
             Long id,
             String nickname,
-            String profilePath,
-            boolean isCurrentUser
+            String profilePath
     ) {
         public static User from(codeit.domain.user.entity.User user) {
             return User.builder()
