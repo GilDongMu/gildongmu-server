@@ -2,14 +2,14 @@ package codeit.domain.report.entity;
 
 import codeit.domain.common.BaseTimeEntity;
 import codeit.domain.user.entity.User;
-import codeit.domain.util.JsonConverter;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Table(name = "reports", indexes = {
         @Index(name = "idx_target_id", columnList = "target_id")
 })
+@Slf4j
 public class Report extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +34,8 @@ public class Report extends BaseTimeEntity {
     @JoinColumn(name = "target_id", nullable = false)
     private User target;
 
+    @Type(JsonType.class)
     @Column(name = "complaints", columnDefinition = "json")
-    @Convert(converter = JsonConverter.class)
     private List<Complaint> complaints = new ArrayList<>();
 
     @Transient

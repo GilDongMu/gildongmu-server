@@ -61,7 +61,7 @@ public class UserController {
     @Operation(summary = "회원 삭제")
     @ApiResponse
     @DeleteMapping("/withdraw")
-    private ResponseEntity<PasswordCheckResponse> withdraw(@AuthenticationPrincipal UserPrincipal principal) {
+    private ResponseEntity<Void> withdraw(@AuthenticationPrincipal UserPrincipal principal) {
         userService.withdraw(principal.getUser());
         return ResponseEntity.ok().build();
     }
