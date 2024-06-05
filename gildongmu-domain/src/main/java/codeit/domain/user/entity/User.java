@@ -84,6 +84,9 @@ public class User extends BaseTimeEntity {
     public void classifyMaliciousUser() {
         isMalicious = true;
     }
+    public void cancelToClassifyMaliciousUser(){
+        isMalicious = false;
+    }
 
     @Builder
     public User(Role role, String email, String nickname, String password, Gender gender,
