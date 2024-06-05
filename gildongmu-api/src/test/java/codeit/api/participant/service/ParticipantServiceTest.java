@@ -55,6 +55,7 @@ class ParticipantServiceTest {
             .nickname("b")
             .role(Role.ROLE_USER)
             .password("encoded")
+            .isDeleted(false)
             .build();
 
     User userC = User.builder()
@@ -62,6 +63,7 @@ class ParticipantServiceTest {
             .nickname("c")
             .role(Role.ROLE_USER)
             .password("encoded")
+            .isDeleted(false)
             .build();
 
 
@@ -70,6 +72,7 @@ class ParticipantServiceTest {
         userA = mock(User.class);
         given(userA.getId()).willReturn(1L);
         given(userA.getNickname()).willReturn("a");
+        given(userA.isDeleted()).willReturn(false);
         post = mock(Post.class);
         given(post.getId()).willReturn(1L);
     }
