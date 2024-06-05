@@ -67,7 +67,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/search/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/reports/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/reports/**", "/contacts").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/reports/**").permitAll()
                                 .requestMatchers("/oauth2/signup").hasRole("GUEST")
                                 .anyRequest().hasRole("USER")
