@@ -102,11 +102,33 @@ public class BookmarkService {
 
         boolean myBookmark = checkBookmarkedByUser(user, post);
 
+        if(user.isDeleted()){
+            return new PostItem(
+                    post.getId(),
+                    post.getTitle(),
+                    null,
+                    post.getUser().isMalicious(),
+                    true,
+                    post.getDestination(),
+                    TripDate.of(post.getStartDate(), post.getEndDate()),
+                    post.getParticipants(),
+                    post.getMemberGender().toString(),
+                    post.getContent(),
+                    post.getStatus().getCode(),
+                    tagList,
+                    post.getThumbnail(),
+                    (long) post.getComments().size(),
+                    (long) post.getBookmarks().size(),
+                    myBookmark
+            );
+        }
+
         return new PostItem(
                 post.getId(),
                 post.getTitle(),
                 post.getUser().getNickname(),
                 post.getUser().isMalicious(),
+                false,
                 post.getDestination(),
                 TripDate.of(post.getStartDate(), post.getEndDate()),
                 post.getParticipants(),
