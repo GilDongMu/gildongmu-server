@@ -109,7 +109,7 @@ class HistoryServiceTest {
                 .willReturn(Optional.of(history));
         given(postService.retrievePostsByPostId(any(), anyList()))
                 .willReturn(List.of(
-                        new PostItem(1L, "저랑 같이", "사과", false, "서울", TripDate.builder()
+                        new PostItem(1L, "저랑 같이", "사과", false, false,"서울", TripDate.builder()
                                 .endDate(LocalDate.MAX)
                                 .startDate(LocalDate.EPOCH)
                                 .build(), (short) 4, "FEMALE", "서울투어하실분", "OPEN", List.of("서울", "혜화"), null, 1L,  1L, false)
