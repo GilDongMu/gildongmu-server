@@ -55,6 +55,9 @@ public class User extends BaseTimeEntity {
     @Column(columnDefinition = "bit(1) default 0")
     private boolean isMalicious;
 
+    @Column(columnDefinition = "bit(1) default 0")
+    private boolean isDeleted;
+
     public void registerOAuth2User(String nickname, Gender gender, LocalDate dateOfBirth,
                                    String bio, List<String> favoriteSpots, String profilePath) {
         this.nickname = nickname;
@@ -84,8 +87,12 @@ public class User extends BaseTimeEntity {
     public void classifyMaliciousUser() {
         isMalicious = true;
     }
-    public void cancelToClassifyMaliciousUser(){
+
+    public void cancelToClassifyMaliciousUser() {
         isMalicious = false;
+    }
+    public void delete() {
+        isDeleted = true;
     }
 
     @Builder

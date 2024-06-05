@@ -102,11 +102,33 @@ public class PostService {
         long countOfBookmarks =
                 post.getBookmarks() != null ? post.getBookmarks().size() : 0;
 
+        if(post.getUser().isDeleted()){
+            return new PostItem(
+                    post.getId(),
+                    post.getTitle(),
+                    null,
+                    post.getUser().isMalicious(),
+                    true,
+                    post.getDestination(),
+                    TripDate.of(post.getStartDate(), post.getEndDate()),
+                    post.getParticipants(),
+                    post.getMemberGender().toString(),
+                    post.getContent(),
+                    post.getStatus().getCode(),
+                    tagList,
+                    post.getThumbnail(),
+                    (long) post.getComments().size(),
+                    countOfBookmarks,
+                    myBookmark
+            );
+        }
+
         return new PostItem(
                 post.getId(),
                 post.getTitle(),
                 post.getUser().getNickname(),
                 post.getUser().isMalicious(),
+                false,
                 post.getDestination(),
                 TripDate.of(post.getStartDate(), post.getEndDate()),
                 post.getParticipants(),
