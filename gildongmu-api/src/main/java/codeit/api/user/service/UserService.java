@@ -70,7 +70,7 @@ public class UserService {
         return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), dbUser.getPassword()));
     }
 
-    public void deleteUser(User user){
+    public void withdraw(User user){
         user.delete();
         userRepository.save(user);
     }

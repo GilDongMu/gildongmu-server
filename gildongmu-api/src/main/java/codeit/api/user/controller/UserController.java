@@ -57,4 +57,12 @@ public class UserController {
         userService.modifyProfile(request, image, principal.getUser());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "회원 삭제")
+    @ApiResponse
+    @DeleteMapping("/withdraw")
+    private ResponseEntity<PasswordCheckResponse> withdraw(@AuthenticationPrincipal UserPrincipal principal) {
+        userService.withdraw(principal.getUser());
+        return ResponseEntity.ok().build();
+    }
 }
