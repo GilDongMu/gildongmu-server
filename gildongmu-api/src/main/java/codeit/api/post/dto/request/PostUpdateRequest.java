@@ -23,6 +23,9 @@ public record PostUpdateRequest(
     @NotBlank(message = "Content is required.")
     String content,
 
+    @NotNull(message = "Status cannot be null")
+    String status,
+
     List<String> tag
 
 ) {
