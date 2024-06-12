@@ -1,11 +1,14 @@
 package codeit.api.comment.controller;
 
+import codeit.api.alert.service.FirebaseNotificationService;
 import codeit.api.comment.dto.request.CommentCreateRequest;
 import codeit.api.comment.dto.request.CommentUpdateRequest;
 import codeit.api.comment.dto.response.CommentListResponse;
 import codeit.api.comment.dto.response.CommentUpdateResponse;
 import codeit.api.comment.service.CommentService;
 import codeit.api.security.UserPrincipal;
+import codeit.domain.post.repository.PostRepository;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+    private final PostRepository postRepository;
+    private final FirebaseNotificationService firebaseNotificationService;
 
     @Operation(summary = "댓글 생성")
     @ApiResponse
@@ -30,9 +35,14 @@ public class CommentController {
     public ResponseEntity<Void> createComment(
             @AuthenticationPrincipal UserPrincipal auth,
             @PathVariable("postId") Long postId,
-            @RequestBody @Valid CommentCreateRequest commentCreateRequest) {
+            @RequestBody @Valid CommentCreateRequest commentCreateRequest)
+        throws FirebaseMessagingException {
 
         commentService.createComment(commentCreateRequest, auth.getUsername(), postId);
+
+        String postAuthorToken = getPostAuthorToken(postId);
+        if (postAuthorToken != null)
+            firebaseNotificationService.sendNotification(postAuthorToken, "새 댓글 알림", auth.getUsername() + "님이 댓글을 달았습니다.");
         return ResponseEntity.ok().build();
 
     }
@@ -81,5 +91,9 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
+    private String getPostAuthorToken(Long postId) {
+        return postRepository.findById(postId)
+            .map(post -> post.getUser().getFcmToken())
+            .orElse(null);
+    }
 }

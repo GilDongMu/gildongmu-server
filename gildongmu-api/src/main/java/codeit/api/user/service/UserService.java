@@ -69,4 +69,10 @@ public class UserService {
                 .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
         return PasswordCheckResponse.of(passwordEncoder.matches(request.getPassword(), dbUser.getPassword()));
     }
+
+    public void updateFcmToken(User user, String fcmToken) {
+        User dbUser = userRepository.findById(user.getId())
+            .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        dbUser.updateFcmToken(fcmToken);
+    }
 }

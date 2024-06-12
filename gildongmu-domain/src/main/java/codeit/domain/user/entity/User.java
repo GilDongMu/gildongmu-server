@@ -25,6 +25,9 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String fcmToken;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private Role role;
@@ -68,6 +71,10 @@ public class User extends BaseTimeEntity {
         this.bio = bio;
         this.favoriteSpots = favoriteSpots;
         this.role = Role.ROLE_USER;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public void updatePassword(String password) {

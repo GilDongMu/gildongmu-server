@@ -57,4 +57,11 @@ public class UserController {
         userService.modifyProfile(request, image, principal.getUser());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "FCM 토큰 받기")
+    @PostMapping("/fcm-token")
+    public ResponseEntity<Void> getFcmToken(@AuthenticationPrincipal UserPrincipal principal, @RequestParam String fcmToken) {
+        userService.updateFcmToken(principal.getUser(), fcmToken);
+        return ResponseEntity.ok().build();
+    }
 }
