@@ -43,6 +43,8 @@ spring:
     bootstrap-servers: ${KAFKA_URI}
     consumer:
       group-id: group-chat
+  fcm:
+    service-account-file: ${FIREBASE_KEY}
 cloud:
   aws:
     s3:

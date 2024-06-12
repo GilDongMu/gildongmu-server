@@ -46,6 +46,7 @@ dependencies {
 	implementation ("io.jsonwebtoken:jjwt-api:0.12.5")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.kafka:spring-kafka")
+	implementation("com.google.firebase:firebase-admin:9.2.0")
 
 	implementation(project(":gildongmu-common"))
 	implementation(project(":gildongmu-domain"))

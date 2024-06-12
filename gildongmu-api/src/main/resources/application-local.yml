@@ -49,6 +49,9 @@ spring:
     consumer:
       group-id: group-chat
 
+  firebase:
+    secret: ${FIREBASE_KEY}
+
 cloud:
   aws:
     s3:
