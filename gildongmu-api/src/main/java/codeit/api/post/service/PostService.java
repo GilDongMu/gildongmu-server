@@ -211,6 +211,7 @@ public class PostService {
         post.updateStartDate(postUpdateRequest.tripDate().startDate());
         post.updateEndDate(postUpdateRequest.tripDate().endDate());
         post.updateGender(MemberGender.valueOf(postUpdateRequest.gender()));
+        post.updateStatus(Status.valueOf(postUpdateRequest.status()));
         post.updateParticipants(postUpdateRequest.numberOfPeople());
 
         List<Image> existImages = imageService.findAllByPostId(postId);
