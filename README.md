@@ -18,6 +18,8 @@
 <br/>
 <img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=for-the-social&logo=MySQL&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-social&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/-MongoDB-black?style=for-the-social&logo=mongodb">
 <br/>
+<img src="https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-social&logo=apache-kafka&logoColor=white">
+<br />
 <img src="https://img.shields.io/badge/JUnit5-25A162?style=for-the-social&logo=junit5&logoColor=white"> <img src="https://img.shields.io/badge/ Swagger-6DB33F?style=for-the-social&logo=swagger&logoColor=white">
 <br />
 
@@ -34,8 +36,57 @@
 <img src="https://github.com/user-attachments/assets/bfe1efcf-bb55-4b4f-b8ce-41d7bd4890bf" width="600" height="400">
 
 
-### Architecture
+### Infra Structure
+<img src="https://github.com/user-attachments/assets/5afea691-6ec7-4f63-973c-4f2036dbdd92" width="600" height="450">
 
+#### CI/CD
+- develop 브랜치의 코드가 개발 서버에 지속적 통합됩니다.
+- git action 에 의해 빌드된 도커 이미지는 도커 허브에 저장되며, 개발 서버에 반영됩니다.
+
+
+
+### Prjoect Structure
+```
+ 📂 gildongmu-server
+ ┣ 📂 gildongmu-api
+ ┃ ┣ 📂src
+ ┃ ┃  ┗ 📂main
+ ┃ ┃    ┗ 📂resources
+ ┃ ┃       ┣ 📜application-dev.yml
+ ┃ ┃       ┗ 📜application-local.yml
+ ┃ ┣ 📜Dockerfile
+ ┃ ┗ 📜build.gradle.kts
+ ┃ ┗ 📂test
+ ┣ 📂 gildongmu-api
+ ┃ ┣ 📂src
+ ┃ ┃  ┗ 📂main
+ ┃ ┃    ┗ 📂resources
+ ┃ ┃       ┣ 📜application-dev.yml
+ ┃ ┃       ┗ 📜application-local.yml
+ ┃ ┣ 📜Dockerfile
+ ┃ ┗ 📜build.gradle.kts
+ ┃ ┗ 📂test
+ ┣ 📂 gildongmu-common
+ ┃  ┗ 📂src
+ ┃  ┗ 📜build.gradle.kts
+ ┣ 📂 gildongmu-domain
+ ┃  ┗ 📂src
+ ┃  ┗ 📜build.gradle.kts
+ ┣ 📜settings.gradle.kts
+ ┗ 📜.gitignore
+```
+</br>
+길동무 프로젝트는 두 개의 서버 모듈과 두 개의 라이브러리 모듈로 구성됩니다.
+</br> </br>
+
+- `📂gildongmu-api` : 서버 모듈로, 서비스의 모든 RESTFul 관련 엔드포인트 및 로직을 포함합니다.
+- `📂gildongmu-chat` : 서버 모듈로, 실시간 통신에 필요한 웹소켓 관련 엔드포인트 및 로직을 포함합니다.
+- `📂gildongmu-domain` : 라이브러리 모듈로, 프로젝트 전반에 사용되는 Entity 와 Repository 를 포함합니다.
+- `📂gildongmu-common` : 라이브러리 모듈로, 여러 모듈에서 공통으로 활용하는 기능에 대한 로직을 포함합니다.
+- `📂**/📜application-dev.yml` : 개발 환경에 반영될 환경변수를 세팅합니다.
+- `📂**/📜application-local.yml` : 로컬 환경에 반영될 환경변수를 세팅합니다.
+- `📜settings.gradle` : 하위 모듈을 선언합니다.
+- `📜.gitignore` : git 에 올라가지 않아야 할 파일을 정의합니다.
 
 
 ### Convention
