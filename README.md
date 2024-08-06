@@ -23,6 +23,10 @@
 <img src="https://img.shields.io/badge/JUnit5-25A162?style=for-the-social&logo=junit5&logoColor=white"> <img src="https://img.shields.io/badge/ Swagger-6DB33F?style=for-the-social&logo=swagger&logoColor=white">
 <br />
 
+- java 17
+- Gradle 8.5
+- Spring Boot 3.1.8
+
 ### Team
 #### FE
 | 박준성 | 김윤수 | 임주민 | 이준기 | 김범승 |
@@ -32,12 +36,9 @@
 | 임아현 |
 
 
-### ERD
-<img src="https://github.com/user-attachments/assets/bfe1efcf-bb55-4b4f-b8ce-41d7bd4890bf" width="600" height="400">
+### DataBase Schema
 
-
-### Infra Structure
-<img src="https://github.com/user-attachments/assets/5afea691-6ec7-4f63-973c-4f2036dbdd92" width="600" height="450">
+<a href='https://www.erdcloud.com/d/BT3zpE3ZrBYM2j74D'><img width="700" height="400" src='https://github.com/user-attachments/assets/bfe1efcf-bb55-4b4f-b8ce-41d7bd4890bf' border='0'></a>
 
 #### CI/CD
 - develop 브랜치의 코드가 개발 서버에 지속적 통합됩니다.
