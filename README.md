@@ -36,6 +36,15 @@
 <img src="https://github.com/user-attachments/assets/bfe1efcf-bb55-4b4f-b8ce-41d7bd4890bf" width="600" height="400">
 
 
+### Infra Structure
+<img src="https://github.com/user-attachments/assets/5afea691-6ec7-4f63-973c-4f2036dbdd92" width="600" height="450">
+
+#### CI/CD
+- develop 브랜치의 코드가 개발 서버에 지속적 통합됩니다.
+- git action 에 의해 빌드된 도커 이미지는 도커 허브에 저장되며, 개발 서버에 반영됩니다.
+
+
+
 ### Prjoect Structure
 ```
  📂 gildongmu-server
