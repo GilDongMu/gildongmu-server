@@ -1,3 +1,32 @@
+### Project
+#### Introduction
+</br>
+<img src="https://github.com/user-attachments/assets/33d6d434-6452-49b0-b6e6-5d92f5c78f7d" width="600" height="400">
+</br>
+</br>
+혼자서 가는 여행은 심심하신가요? 비싼 비용을 분담하고 싶으신가요? </br>
+혼자 여행하기 부담스러우신 분들, 이런저런 여행 친구들 만나보고 싶으신 분들 그리고 여행에 관한 정보를 공유하고 싶으신 분들을 위한 사이트. </br>
+‘길동무’ 에서 여행 친구도 구하고 여러가지 정보를 공유해보아요!
+
+#### Project Period
+2024-03-06 ~ 2024-05-30
+
+### Team
+#### FE
+| 박준성 | 김윤수 | 임주민 | 이준기 | 김범승 |
+#### BE
+| 송원선 | 이서연 |
+#### Design
+| 임아현 |
+
+
+### ERD
+<img src="https://github.com/user-attachments/assets/bfe1efcf-bb55-4b4f-b8ce-41d7bd4890bf" width="600" height="400">
+
+
+### Architecture
+
+
 
 ### Convention
 #### Branch Strategy
